@@ -1,0 +1,48 @@
+{
+  "network": {
+    "stellar": {
+      "network": "testnet",
+      "horizon": "https://horizon-testnet.stellar.org",
+      "baseFee": 100
+    },
+    "ipfs": {
+      "node": "https://ipfs.infura.io:5001",
+      "gateway": "https://ipfs.io/ipfs",
+      "timeout": 30000
+    }
+  },
+  "platform": {
+    "minReviewers": 3,
+    "minVerifications": 2,
+    "reviewTimeout": 604800,
+    "verificationTimeout": 1209600,
+    "maxContentSize": 52428800
+  },
+  "validation": {
+    "allowedFileTypes": [
+      "pdf",
+      "md",
+      "tex",
+      "csv",
+      "json",
+      "zip"
+    ],
+    "maxFileSize": 10485760
+  },
+  "security": {
+    "rateLimits": {
+      "submissions": {
+        "window": 86400,
+        "max": 100
+      },
+      "reviews": {
+        "window": 86400,
+        "max": 50
+      }
+    }
+  },
+  "development": {
+    "debug": false,
+    "logLevel": "info"
+  }
+}
