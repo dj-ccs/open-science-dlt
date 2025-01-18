@@ -1,0 +1,21 @@
+{
+  "entryPoints": ["src/index.ts"],
+  "out": "docs/generated",
+  "exclude": ["**/*.test.ts", "**/__mocks__/**"],
+  "theme": "default",
+  "name": "OpenScienceDLT Documentation",
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeExternals": true,
+  "includeVersion": true,
+  "hideGenerator": true,
+  "readme": "README.md",
+  "categorizeByGroup": true,
+  "categoryOrder": [
+    "Core",
+    "Contracts",
+    "Platform",
+    "Utils",
+    "*"
+  ]
+}
