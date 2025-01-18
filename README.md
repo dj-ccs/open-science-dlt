@@ -114,6 +114,34 @@ cp config/default.example.json config/default.json
 npm test
 ```
 
+## Development Setup
+
+### Prerequisites
+- Node.js (v16 or higher)
+- npm (v7 or higher)
+- Git
+
+### Environment Setup
+
+1. **Code Quality Tools**
+
+Install ESLint extension for your IDE:
+- VS Code: "ESLint" by Microsoft
+- IntelliJ/WebStorm: Enable ESLint in Settings
+
+Configure Prettier:
+```bash
+# Install Prettier extension
+# VS Code: "Prettier - Code formatter"
+# Enable format on save in your editor
+
+# Check formatting
+npm run format:check
+
+# Fix formatting
+npm run format
+```
+
 ## 💻 Usage Example
 
 ```javascript
@@ -162,6 +190,31 @@ The platform can be configured using environment variables or the `config/defaul
 }
 ```
 
+## Available Scripts
+
+```bash
+# Development
+npm run dev             # Start development server
+npm run build           # Build for production
+npm run clean           # Clean build files
+
+# Testing
+npm test               # Run tests
+npm run test:watch     # Watch mode
+
+# Code Quality
+npm run lint           # Check code style
+npm run lint:fix       # Fix code style
+npm run format         # Format code
+npm run type-check     # Check types
+
+# Documentation
+npm run docs           # Generate documentation
+
+# Security
+npm run security-audit # Run security checks
+```
+
 ## 🤝 Contributing
 
 We welcome contributions! Please see our [Contributing Guide](docs/CONTRIBUTING.md) for details.
@@ -171,6 +224,40 @@ We welcome contributions! Please see our [Contributing Guide](docs/CONTRIBUTING.
 3. Commit your changes
 4. Push to your branch
 5. Create a Pull Request
+
+## CI/CD Pipeline
+
+Our GitHub Actions workflows handle:
+
+1. **Code Quality**
+- Linting
+- Type checking
+- Style verification
+- SonarCloud analysis
+
+2. **Security**
+- Vulnerability scanning
+- Dependency review
+- CodeQL analysis
+
+3. **Documentation**
+- API docs generation
+- Link checking
+- GitHub Pages deployment
+
+4. **Release**
+- Automated releases
+- Changelog generation
+- npm publishing
+
+### Setting Up Required Secrets
+
+Add these secrets in your GitHub repository settings:
+```markdown
+SONAR_TOKEN          # For SonarCloud analysis
+SNYK_TOKEN           # For Snyk security scanning
+NPM_TOKEN            # For npm package publishing
+```
 
 ## 📄 License
 
