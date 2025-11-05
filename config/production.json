@@ -1,0 +1,22 @@
+{
+  "app": {
+    "environment": "production"
+  },
+  "api": {
+    "corsOrigins": ["https://openscience.app"],
+    "rateLimit": {
+      "max": 50,
+      "window": "15m"
+    }
+  },
+  "network": {
+    "stellar": {
+      "network": "public",
+      "horizon": "https://horizon.stellar.org"
+    }
+  },
+  "development": {
+    "debug": false,
+    "logLevel": "warn"
+  }
+}
