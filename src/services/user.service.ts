@@ -175,7 +175,9 @@ export class UserService {
 
     // Update session with new JTI
     await sessionRepository.create({
-      userId: user.id,
+      user: {
+        connect: { id: user.id },
+      },
       jti,
       expiresAt,
       refreshToken: session.refreshToken,
