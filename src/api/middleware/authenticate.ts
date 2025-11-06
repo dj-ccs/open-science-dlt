@@ -9,10 +9,7 @@ import { logger } from '../../utils/logger';
  *
  * Verifies JWT token and attaches user to request object
  */
-export async function authenticate(
-  request: FastifyRequest,
-  reply: FastifyReply
-): Promise<void> {
+export async function authenticate(request: FastifyRequest, _reply: FastifyReply): Promise<void> {
   try {
     // Extract token from Authorization header
     const authHeader = request.headers.authorization;
@@ -58,7 +55,7 @@ export async function authenticate(
  */
 export async function optionalAuthenticate(
   request: FastifyRequest,
-  reply: FastifyReply
+  _reply: FastifyReply
 ): Promise<void> {
   try {
     const authHeader = request.headers.authorization;

@@ -1,7 +1,9 @@
 # open-science-dlt
+
 A decentralized platform for open science publishing using Stellar blockchain
 
 ## 🎯 Project Goals
+
 - Prevent suppression of scientific research
 - Make peer review process transparent and auditable
 - Enable independent verification of research
@@ -17,6 +19,7 @@ The history of scientific publishing reveals a concerning pattern of knowledge c
 - The academic publishing industry became a powerful gatekeeper of knowledge
 
 This centralized control of scientific knowledge continues today through commercial academic publishers, creating:
+
 - Paywalls blocking access to publicly-funded research
 - Potential manipulation of the peer review process
 - Lack of transparency in research verification
@@ -48,6 +51,7 @@ By leveraging Stellar's distributed ledger technology and IPFS for content stora
 ## Join the Revolution
 
 Help us build a future where scientific knowledge is:
+
 - Free from manipulation
 - Accessible to all
 - Transparently reviewed
@@ -56,6 +60,7 @@ Help us build a future where scientific knowledge is:
 Together, we can ensure that scientific knowledge serves humanity rather than special interests.
 
 ## 📁 Repository Structure
+
 ```
 open-science-dlt/
 ├── .github/workflows/          # CI/CD workflows
@@ -105,6 +110,7 @@ open-science-dlt/
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - **Node.js** v16+ (v18 or v20 recommended)
 - **npm** v7+ (v9+ recommended)
 - **PostgreSQL** 15+ (for database)
@@ -121,6 +127,7 @@ npm install
 ### 2. Database Setup
 
 Create a PostgreSQL database:
+
 ```bash
 createdb open_science_dlt
 createdb open_science_dlt_test  # For tests
@@ -129,11 +136,13 @@ createdb open_science_dlt_test  # For tests
 ### 3. Environment Configuration
 
 Copy the example environment file:
+
 ```bash
 cp .env.example .env
 ```
 
 Edit `.env` with your configuration:
+
 ```env
 # Database
 DATABASE_URL=postgresql://user:password@localhost:5432/open_science_dlt?schema=public
@@ -154,6 +163,7 @@ API_PORT=3000
 ### 4. Initialize Database
 
 Run Prisma migrations:
+
 ```bash
 npm run db:generate  # Generate Prisma client
 npm run db:migrate   # Run database migrations
@@ -186,6 +196,7 @@ The platform provides a complete REST API for authentication and user management
 **Base URL:** `http://localhost:3000/api/v1`
 
 #### Generate Challenge
+
 ```bash
 GET /auth/challenge
 ```
@@ -193,6 +204,7 @@ GET /auth/challenge
 Returns a time-limited challenge for Stellar signature authentication.
 
 #### Stellar Authentication
+
 ```bash
 POST /auth/stellar
 Content-Type: application/json
@@ -205,6 +217,7 @@ Content-Type: application/json
 ```
 
 #### Email/Password Login
+
 ```bash
 POST /auth/login
 Content-Type: application/json
@@ -216,6 +229,7 @@ Content-Type: application/json
 ```
 
 #### Register New User
+
 ```bash
 POST /auth/register
 Content-Type: application/json
@@ -229,6 +243,7 @@ Content-Type: application/json
 ```
 
 #### Get Current User
+
 ```bash
 GET /auth/me
 Authorization: Bearer <access-token>
@@ -277,27 +292,32 @@ npm run security-audit # Run security checks
 ### Project Structure Deep Dive
 
 **API Layer** (`src/api/`):
+
 - **Routes**: Define endpoints and attach handlers
 - **Controllers**: Handle HTTP requests/responses
 - **Middleware**: Authentication, error handling, logging
 - **Schemas**: Zod validation for request/response
 
 **Authentication** (`src/auth/`):
+
 - **JWT Service**: Token generation and verification
 - **Stellar Auth**: Signature-based authentication
 - **Password Service**: bcrypt hashing and validation
 
 **Database** (`src/database/`):
+
 - **Repositories**: Data access layer (CRUD operations)
 - **Prisma Client**: Type-safe database client
 
 **Services** (`src/services/`):
+
 - Business logic layer
 - Orchestrates repositories and external services
 
 ### Code Quality Tools
 
 The project uses:
+
 - **ESLint**: Code linting with TypeScript support
 - **Prettier**: Code formatting
 - **Husky**: Git hooks for pre-commit checks
@@ -305,6 +325,7 @@ The project uses:
 - **TypeScript**: Static typing (strict mode)
 
 Install IDE extensions:
+
 - **VS Code**: ESLint, Prettier, Prisma
 - **IntelliJ/WebStorm**: Enable ESLint, Prettier plugins
 
@@ -360,7 +381,7 @@ import { OpenSciencePlatform } from 'open-science-dlt';
 const platform = new OpenSciencePlatform({
   network: 'testnet',
   ipfsNode: 'https://ipfs.infura.io:5001',
-  secretKey: process.env.STELLAR_SECRET_KEY
+  secretKey: process.env.STELLAR_SECRET_KEY,
 });
 
 // Submit research paper
@@ -370,7 +391,7 @@ const result = await platform.submitPaper({
   authors: ['GXXXXXXXXX...'],
   keywords: ['research', 'science', 'innovation'],
   content: 'Full paper content...',
-  timestamp: Date.now()
+  timestamp: Date.now(),
 });
 
 console.log('Paper submitted:', result.hash);
@@ -390,14 +411,14 @@ const response = await axios.post(`${API_BASE}/auth/register`, {
   email: 'researcher@university.edu',
   password: 'SecurePassword123!',
   displayName: 'Dr. Jane Smith',
-  affiliation: 'Stanford University'
+  affiliation: 'Stanford University',
 });
 
 const { accessToken } = response.data;
 
 // Use token for authenticated requests
 const profile = await axios.get(`${API_BASE}/auth/me`, {
-  headers: { Authorization: `Bearer ${accessToken}` }
+  headers: { Authorization: `Bearer ${accessToken}` },
 });
 ```
 
@@ -416,22 +437,26 @@ We welcome contributions! Please see our [Contributing Guide](docs/CONTRIBUTING.
 Our GitHub Actions workflows handle:
 
 1. **Code Quality**
+
 - Linting
 - Type checking
 - Style verification
 - SonarCloud analysis
 
 2. **Security**
+
 - Vulnerability scanning
 - Dependency review
 - CodeQL analysis
 
 3. **Documentation**
+
 - API docs generation
 - Link checking
 - GitHub Pages deployment
 
 4. **Release**
+
 - Automated releases
 - Changelog generation
 - npm publishing
@@ -439,10 +464,11 @@ Our GitHub Actions workflows handle:
 ### Setting Up Required Secrets
 
 Add these secrets in your GitHub repository settings:
+
 ```markdown
-SONAR_TOKEN          # For SonarCloud analysis
-SNYK_TOKEN           # For Snyk security scanning
-NPM_TOKEN            # For npm package publishing
+SONAR_TOKEN # For SonarCloud analysis
+SNYK_TOKEN # For Snyk security scanning
+NPM_TOKEN # For npm package publishing
 ```
 
 ## 📄 License

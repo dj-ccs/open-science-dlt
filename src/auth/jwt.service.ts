@@ -19,9 +19,11 @@ export class JWTService {
   /**
    * Generate access token
    */
-  static generateAccessToken(
-    payload: Omit<JWTPayload, 'iat' | 'exp' | 'jti'>
-  ): { token: string; jti: string; expiresAt: Date } {
+  static generateAccessToken(payload: Omit<JWTPayload, 'iat' | 'exp' | 'jti'>): {
+    token: string;
+    jti: string;
+    expiresAt: Date;
+  } {
     const jti = crypto.randomUUID();
 
     const token = jwt.sign({ ...payload, jti }, this.jwtSecret, {

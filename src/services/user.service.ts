@@ -61,10 +61,7 @@ export class UserService {
   /**
    * Authenticate user with email/password
    */
-  async authenticateWithEmail(
-    email: string,
-    password: string
-  ): Promise<AuthResponse> {
+  async authenticateWithEmail(email: string, password: string): Promise<AuthResponse> {
     // Find user by email
     const user = await userRepository.findByEmail(email);
     if (!user) {
@@ -229,7 +226,11 @@ export class UserService {
    */
   private async generateAuthTokens(user: User): Promise<AuthResponse> {
     // Generate JWT tokens
-    const { token: accessToken, jti, expiresAt } = JWTService.generateAccessToken({
+    const {
+      token: accessToken,
+      jti,
+      expiresAt,
+    } = JWTService.generateAccessToken({
       sub: user.id,
       stellarKey: user.stellarPublicKey,
       email: user.email || undefined,

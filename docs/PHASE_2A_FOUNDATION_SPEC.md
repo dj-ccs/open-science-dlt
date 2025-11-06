@@ -54,24 +54,24 @@ Phase 2A establishes the foundational infrastructure required for all subsequent
 
 ### Core Technologies
 
-| Technology | Version | Rationale |
-|------------|---------|-----------|
-| **Fastify** | ^4.24.0 | High performance, TypeScript-first, schema-based validation |
-| **Prisma** | ^5.5.0 | Type-safe ORM, excellent migration tooling, TypeScript integration |
-| **PostgreSQL** | 15+ | JSONB support for flexible metadata, robust ACID compliance |
-| **Zod** | ^3.22.0 | Runtime type validation, TypeScript inference, composable |
-| **JWT** | jsonwebtoken ^9.0.2 | Industry standard for stateless authentication |
-| **bcrypt** | ^5.1.1 | Password hashing (for optional password auth) |
+| Technology     | Version             | Rationale                                                          |
+| -------------- | ------------------- | ------------------------------------------------------------------ |
+| **Fastify**    | ^4.24.0             | High performance, TypeScript-first, schema-based validation        |
+| **Prisma**     | ^5.5.0              | Type-safe ORM, excellent migration tooling, TypeScript integration |
+| **PostgreSQL** | 15+                 | JSONB support for flexible metadata, robust ACID compliance        |
+| **Zod**        | ^3.22.0             | Runtime type validation, TypeScript inference, composable          |
+| **JWT**        | jsonwebtoken ^9.0.2 | Industry standard for stateless authentication                     |
+| **bcrypt**     | ^5.1.1              | Password hashing (for optional password auth)                      |
 
 ### Development Dependencies
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| **@fastify/cors** | ^8.4.0 | CORS middleware |
-| **@fastify/helmet** | ^11.1.0 | Security headers |
-| **@fastify/rate-limit** | ^9.0.0 | Rate limiting |
-| **@fastify/jwt** | ^7.2.0 | JWT plugin for Fastify |
-| **@prisma/client** | ^5.5.0 | Database client (auto-generated) |
+| Technology              | Version | Purpose                          |
+| ----------------------- | ------- | -------------------------------- |
+| **@fastify/cors**       | ^8.4.0  | CORS middleware                  |
+| **@fastify/helmet**     | ^11.1.0 | Security headers                 |
+| **@fastify/rate-limit** | ^9.0.0  | Rate limiting                    |
+| **@fastify/jwt**        | ^7.2.0  | JWT plugin for Fastify           |
+| **@prisma/client**      | ^5.5.0  | Database client (auto-generated) |
 
 ---
 
@@ -591,16 +591,19 @@ import { verifyRoutes } from './verify.routes';
 
 export async function registerRoutes(server: FastifyInstance) {
   // API v1 prefix
-  await server.register(async (v1) => {
-    // Public routes
-    await v1.register(authRoutes, { prefix: '/auth' });
-    await v1.register(verifyRoutes, { prefix: '/verify' });
+  await server.register(
+    async v1 => {
+      // Public routes
+      await v1.register(authRoutes, { prefix: '/auth' });
+      await v1.register(verifyRoutes, { prefix: '/verify' });
 
-    // Protected routes
-    await v1.register(userRoutes, { prefix: '/users' });
-    await v1.register(paperRoutes, { prefix: '/papers' });
-    await v1.register(reviewRoutes, { prefix: '/reviews' });
-  }, { prefix: '/api/v1' });
+      // Protected routes
+      await v1.register(userRoutes, { prefix: '/users' });
+      await v1.register(paperRoutes, { prefix: '/papers' });
+      await v1.register(reviewRoutes, { prefix: '/reviews' });
+    },
+    { prefix: '/api/v1' }
+  );
 }
 ```
 
@@ -611,11 +614,7 @@ export async function registerRoutes(server: FastifyInstance) {
 ```typescript
 import { FastifyInstance } from 'fastify';
 import { authController } from '../controllers/auth.controller';
-import {
-  stellarAuthSchema,
-  emailAuthSchema,
-  refreshTokenSchema,
-} from '../schemas/auth.schema';
+import { stellarAuthSchema, emailAuthSchema, refreshTokenSchema } from '../schemas/auth.schema';
 
 export async function authRoutes(server: FastifyInstance) {
   // Stellar public key authentication
@@ -658,11 +657,7 @@ export async function authRoutes(server: FastifyInstance) {
 import { FastifyInstance } from 'fastify';
 import { paperController } from '../controllers/paper.controller';
 import { authenticate } from '../middleware/authenticate';
-import {
-  submitPaperSchema,
-  getPaperSchema,
-  listPapersSchema,
-} from '../schemas/paper.schema';
+import { submitPaperSchema, getPaperSchema, listPapersSchema } from '../schemas/paper.schema';
 
 export async function paperRoutes(server: FastifyInstance) {
   // Submit new paper (protected)
@@ -693,30 +688,30 @@ export async function paperRoutes(server: FastifyInstance) {
 
 ### API Endpoint Specification
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
+| Method             | Endpoint                          | Auth      | Description                         |
+| ------------------ | --------------------------------- | --------- | ----------------------------------- |
 | **Authentication** |
-| POST | `/api/v1/auth/stellar` | Public | Authenticate with Stellar signature |
-| POST | `/api/v1/auth/login` | Public | Email/password login |
-| POST | `/api/v1/auth/refresh` | Public | Refresh JWT token |
-| POST | `/api/v1/auth/logout` | Protected | Logout and revoke session |
-| GET | `/api/v1/auth/me` | Protected | Get current user profile |
-| **Users** |
-| GET | `/api/v1/users/:id` | Public | Get user profile |
-| PATCH | `/api/v1/users/:id` | Protected | Update own profile |
-| GET | `/api/v1/users/:id/reputation` | Public | Get reputation history |
-| **Papers** |
-| POST | `/api/v1/papers` | Protected | Submit new paper |
-| GET | `/api/v1/papers` | Public | List papers (with filters) |
-| GET | `/api/v1/papers/:id` | Public | Get paper details |
-| GET | `/api/v1/papers/:id/history` | Public | Get blockchain history |
-| **Reviews** |
-| POST | `/api/v1/reviews` | Protected | Submit review |
-| GET | `/api/v1/reviews/:id` | Public | Get review details |
-| GET | `/api/v1/papers/:paperId/reviews` | Public | List reviews for paper |
-| **Verification** |
-| POST | `/api/v1/verify/hash` | Public | Verify file hash against blockchain |
-| GET | `/api/v1/verify/:txHash` | Public | Get verification proof |
+| POST               | `/api/v1/auth/stellar`            | Public    | Authenticate with Stellar signature |
+| POST               | `/api/v1/auth/login`              | Public    | Email/password login                |
+| POST               | `/api/v1/auth/refresh`            | Public    | Refresh JWT token                   |
+| POST               | `/api/v1/auth/logout`             | Protected | Logout and revoke session           |
+| GET                | `/api/v1/auth/me`                 | Protected | Get current user profile            |
+| **Users**          |
+| GET                | `/api/v1/users/:id`               | Public    | Get user profile                    |
+| PATCH              | `/api/v1/users/:id`               | Protected | Update own profile                  |
+| GET                | `/api/v1/users/:id/reputation`    | Public    | Get reputation history              |
+| **Papers**         |
+| POST               | `/api/v1/papers`                  | Protected | Submit new paper                    |
+| GET                | `/api/v1/papers`                  | Public    | List papers (with filters)          |
+| GET                | `/api/v1/papers/:id`              | Public    | Get paper details                   |
+| GET                | `/api/v1/papers/:id/history`      | Public    | Get blockchain history              |
+| **Reviews**        |
+| POST               | `/api/v1/reviews`                 | Protected | Submit review                       |
+| GET                | `/api/v1/reviews/:id`             | Public    | Get review details                  |
+| GET                | `/api/v1/papers/:paperId/reviews` | Public    | List reviews for paper              |
+| **Verification**   |
+| POST               | `/api/v1/verify/hash`             | Public    | Verify file hash against blockchain |
+| GET                | `/api/v1/verify/:txHash`          | Public    | Get verification proof              |
 
 ---
 
@@ -728,14 +723,14 @@ export async function paperRoutes(server: FastifyInstance) {
 
 ```typescript
 interface JWTPayload {
-  sub: string;              // User ID
-  stellarKey: string;       // Stellar public key
-  email?: string;           // User email (if available)
-  orcidId?: string;         // ORCID iD (Phase 2B)
-  reputation: number;       // Reputation score
-  iat: number;              // Issued at (timestamp)
-  exp: number;              // Expiration (timestamp)
-  jti: string;              // JWT ID (for revocation)
+  sub: string; // User ID
+  stellarKey: string; // Stellar public key
+  email?: string; // User email (if available)
+  orcidId?: string; // ORCID iD (Phase 2B)
+  reputation: number; // Reputation score
+  iat: number; // Issued at (timestamp)
+  exp: number; // Expiration (timestamp)
+  jti: string; // JWT ID (for revocation)
 }
 ```
 
@@ -776,11 +771,7 @@ export class StellarAuth {
   /**
    * Verify Stellar signature
    */
-  static verifySignature(
-    publicKey: string,
-    challenge: string,
-    signature: string
-  ): boolean {
+  static verifySignature(publicKey: string, challenge: string, signature: string): boolean {
     try {
       const keypair = Keypair.fromPublicKey(publicKey);
       const challengeBuffer = Buffer.from(challenge, 'utf-8');
@@ -814,7 +805,7 @@ export class StellarAuth {
     const now = Date.now();
     const fiveMinutes = 5 * 60 * 1000;
 
-    return (now - timestamp) < fiveMinutes;
+    return now - timestamp < fiveMinutes;
   }
 }
 ```
@@ -836,29 +827,21 @@ export class JWTService {
   static generateAccessToken(payload: Omit<JWTPayload, 'iat' | 'exp' | 'jti'>): string {
     const jti = crypto.randomUUID();
 
-    return jwt.sign(
-      { ...payload, jti },
-      config.auth.jwtSecret,
-      {
-        expiresIn: config.auth.jwtExpiration,
-        issuer: 'open-science-dlt',
-        audience: 'open-science-dlt-api',
-      }
-    );
+    return jwt.sign({ ...payload, jti }, config.auth.jwtSecret, {
+      expiresIn: config.auth.jwtExpiration,
+      issuer: 'open-science-dlt',
+      audience: 'open-science-dlt-api',
+    });
   }
 
   /**
    * Generate refresh token
    */
   static generateRefreshToken(userId: string): string {
-    return jwt.sign(
-      { sub: userId, type: 'refresh' },
-      config.auth.refreshTokenSecret,
-      {
-        expiresIn: config.auth.refreshTokenExpiration,
-        issuer: 'open-science-dlt',
-      }
-    );
+    return jwt.sign({ sub: userId, type: 'refresh' }, config.auth.refreshTokenSecret, {
+      expiresIn: config.auth.refreshTokenExpiration,
+      issuer: 'open-science-dlt',
+    });
   }
 
   /**
@@ -903,10 +886,7 @@ import { JWTService } from '../../auth/jwt.service';
 import { sessionRepository } from '../../database/repositories/session.repository';
 import { AppError } from '../../types/errors.types';
 
-export async function authenticate(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
+export async function authenticate(request: FastifyRequest, reply: FastifyReply) {
   try {
     // Extract token from Authorization header
     const authHeader = request.headers.authorization;
@@ -932,7 +912,6 @@ export async function authenticate(
 
     // Attach user info to request
     request.user = payload;
-
   } catch (error) {
     if (error instanceof AppError) {
       return reply.code(error.statusCode).send({
@@ -965,17 +944,14 @@ import { z } from 'zod';
 // ============================================================================
 
 export const stellarAuthRequestSchema = z.object({
-  publicKey: z.string()
+  publicKey: z
+    .string()
     .length(56)
     .regex(/^G[A-Z2-7]{55}$/, 'Invalid Stellar public key format'),
 
-  challenge: z.string()
-    .min(10)
-    .max(200),
+  challenge: z.string().min(10).max(200),
 
-  signature: z.string()
-    .min(1)
-    .max(500),
+  signature: z.string().min(1).max(500),
 });
 
 export const stellarAuthResponseSchema = z.object({
@@ -1042,25 +1018,27 @@ import { z } from 'zod';
 // ============================================================================
 
 export const submitPaperRequestSchema = z.object({
-  title: z.string()
+  title: z
+    .string()
     .min(10, 'Title must be at least 10 characters')
     .max(500, 'Title must not exceed 500 characters'),
 
-  abstract: z.string()
+  abstract: z
+    .string()
     .min(100, 'Abstract must be at least 100 characters')
     .max(5000, 'Abstract must not exceed 5000 characters'),
 
-  keywords: z.array(z.string())
+  keywords: z
+    .array(z.string())
     .min(3, 'At least 3 keywords required')
     .max(10, 'Maximum 10 keywords allowed'),
 
-  authors: z.array(z.string().regex(/^G[A-Z2-7]{55}$/))
+  authors: z
+    .array(z.string().regex(/^G[A-Z2-7]{55}$/))
     .min(1, 'At least one author required')
     .max(20, 'Maximum 20 authors allowed'),
 
-  content: z.string()
-    .min(1)
-    .max(10485760, 'Content must not exceed 10MB'), // 10MB in chars
+  content: z.string().min(1).max(10485760, 'Content must not exceed 10MB'), // 10MB in chars
 });
 
 export const submitPaperResponseSchema = z.object({
@@ -1083,7 +1061,10 @@ export const submitPaperSchema = {
 // ============================================================================
 
 export const getPaperParamsSchema = z.object({
-  id: z.string().cuid().or(z.string().regex(/^Qm[a-zA-Z0-9]{44}$/)), // CUID or IPFS hash
+  id: z
+    .string()
+    .cuid()
+    .or(z.string().regex(/^Qm[a-zA-Z0-9]{44}$/)), // CUID or IPFS hash
 });
 
 export const getPaperResponseSchema = z.object({
@@ -1447,7 +1428,7 @@ export const paperController = {
     });
 
     return reply.code(201).send(paper);
-  }
+  },
 };
 ```
 
@@ -1456,6 +1437,7 @@ export const paperController = {
 **Challenge:** Existing blockchain data needs to be indexed in the database.
 
 **Solution:** Migration script to:
+
 1. Query Stellar for all historical transactions
 2. Parse transaction data
 3. Create database records for existing papers/reviews
@@ -1475,6 +1457,7 @@ export const paperController = {
 ### Unit Tests
 
 **Test Coverage Goals:**
+
 - Controllers: 90%+
 - Services: 90%+
 - Repositories: 85%+
@@ -1538,6 +1521,7 @@ describe('Authentication API', () => {
 ### Integration Tests
 
 Test full API flows:
+
 1. User authentication → Paper submission → Database persistence → Blockchain verification
 2. Review submission → Reputation update → Status change
 

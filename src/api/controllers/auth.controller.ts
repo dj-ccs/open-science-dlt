@@ -19,10 +19,7 @@ export class AuthController {
    * POST /api/v1/auth/challenge
    * Generate authentication challenge for Stellar signature
    */
-  async generateChallenge(
-    request: FastifyRequest,
-    reply: FastifyReply
-  ): Promise<void> {
+  async generateChallenge(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const challenge = StellarAuth.generateChallenge();
 
     // Challenge expires in 5 minutes
@@ -48,11 +45,7 @@ export class AuthController {
       publicKey: StellarAuth.formatPublicKey(publicKey),
     });
 
-    const authResponse = await userService.authenticateWithStellar(
-      publicKey,
-      challenge,
-      signature
-    );
+    const authResponse = await userService.authenticateWithStellar(publicKey, challenge, signature);
 
     reply.code(200).send(authResponse);
   }
@@ -121,10 +114,7 @@ export class AuthController {
    * POST /api/v1/auth/logout
    * Logout user (revoke session)
    */
-  async logout(
-    request: FastifyRequest,
-    reply: FastifyReply
-  ): Promise<void> {
+  async logout(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const user = request.user!;
 
     await userService.logout(user.jti);
@@ -138,10 +128,7 @@ export class AuthController {
    * GET /api/v1/auth/me
    * Get current user profile
    */
-  async getCurrentUser(
-    request: FastifyRequest,
-    reply: FastifyReply
-  ): Promise<void> {
+  async getCurrentUser(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const userId = request.user!.sub;
 
     const user = await userService.getUserById(userId);

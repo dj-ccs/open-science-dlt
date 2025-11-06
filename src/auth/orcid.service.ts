@@ -26,7 +26,7 @@ export class ORCIDService {
    * Generate ORCID OAuth authorization URL
    * (Phase 2B implementation)
    */
-  static getAuthorizationUrl(state: string): string {
+  static getAuthorizationUrl(_state: string): string {
     logger.info('ORCID authorization URL requested (not yet implemented)');
     // TODO: Implement in Phase 2B
     return '';
@@ -36,7 +36,7 @@ export class ORCIDService {
    * Exchange authorization code for access token
    * (Phase 2B implementation)
    */
-  static async getAccessToken(code: string): Promise<{
+  static async getAccessToken(_code: string): Promise<{
     accessToken: string;
     orcidId: string;
   }> {
@@ -49,7 +49,7 @@ export class ORCIDService {
    * Fetch ORCID profile data
    * (Phase 2B implementation)
    */
-  static async getProfile(accessToken: string, orcidId: string): Promise<ORCIDProfile> {
+  static async getProfile(_accessToken: string, _orcidId: string): Promise<ORCIDProfile> {
     logger.info('ORCID profile fetch requested (not yet implemented)');
     // TODO: Implement in Phase 2B
     throw new Error('ORCID integration not yet implemented - Phase 2B');

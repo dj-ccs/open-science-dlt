@@ -5,7 +5,12 @@
 import '../setup';
 import { userService } from '../../src/services/user.service';
 import { UnauthorizedError, ConflictError, ValidationError } from '../../src/types/errors.types';
-import { createTestUser, generateStellarKeypair, signChallenge, createTestSession } from '../helpers/factories';
+import {
+  createTestUser,
+  generateStellarKeypair,
+  signChallenge,
+  createTestSession,
+} from '../helpers/factories';
 import { StellarAuth } from '../../src/auth/stellar.auth';
 import { prisma } from '../setup';
 
@@ -34,11 +39,7 @@ describe('UserService', () => {
       const challenge = StellarAuth.generateChallenge();
       const signature = signChallenge(challenge, keypair);
 
-      const result = await userService.authenticateWithStellar(
-        publicKey,
-        challenge,
-        signature
-      );
+      const result = await userService.authenticateWithStellar(publicKey, challenge, signature);
 
       expect(result.accessToken).toBeDefined();
       expect(result.user.stellarPublicKey).toBe(publicKey);
@@ -90,11 +91,7 @@ describe('UserService', () => {
       const challenge = StellarAuth.generateChallenge();
       const signature = signChallenge(challenge, stellarKeys!.keypair);
 
-      await userService.authenticateWithStellar(
-        user.stellarPublicKey,
-        challenge,
-        signature
-      );
+      await userService.authenticateWithStellar(user.stellarPublicKey, challenge, signature);
 
       const sessions = await prisma.session.findMany({
         where: { userId: user.id },
@@ -109,7 +106,7 @@ describe('UserService', () => {
     it('should authenticate user with correct password', async () => {
       const email = 'test@example.com';
       const password = 'SecurePassword123!';
-      const { user } = await createTestUser({ email, password });
+      await createTestUser({ email, password });
 
       const result = await userService.authenticateWithEmail(email, password);
 
@@ -129,18 +126,18 @@ describe('UserService', () => {
       const password = 'SecurePassword123!';
       await createTestUser({ email, password });
 
-      await expect(
-        userService.authenticateWithEmail(email, 'WrongPassword123!')
-      ).rejects.toThrow(UnauthorizedError);
+      await expect(userService.authenticateWithEmail(email, 'WrongPassword123!')).rejects.toThrow(
+        UnauthorizedError
+      );
     });
 
     it('should throw UnauthorizedError for user without password', async () => {
       const email = 'test@example.com';
       await createTestUser({ email }); // No password set
 
-      await expect(
-        userService.authenticateWithEmail(email, 'anypassword')
-      ).rejects.toThrow(UnauthorizedError);
+      await expect(userService.authenticateWithEmail(email, 'anypassword')).rejects.toThrow(
+        UnauthorizedError
+      );
     });
 
     it('should throw UnauthorizedError for inactive user', async () => {
@@ -153,9 +150,9 @@ describe('UserService', () => {
         data: { isActive: false },
       });
 
-      await expect(
-        userService.authenticateWithEmail(email, password)
-      ).rejects.toThrow(UnauthorizedError);
+      await expect(userService.authenticateWithEmail(email, password)).rejects.toThrow(
+        UnauthorizedError
+      );
     });
   });
 
@@ -246,9 +243,9 @@ describe('UserService', () => {
     });
 
     it('should throw UnauthorizedError for invalid refresh token', async () => {
-      await expect(
-        userService.refreshAccessToken('invalid-token')
-      ).rejects.toThrow(UnauthorizedError);
+      await expect(userService.refreshAccessToken('invalid-token')).rejects.toThrow(
+        UnauthorizedError
+      );
     });
 
     it('should throw UnauthorizedError for revoked session', async () => {
@@ -260,9 +257,9 @@ describe('UserService', () => {
         data: { isRevoked: true },
       });
 
-      await expect(
-        userService.refreshAccessToken(session.refreshToken!)
-      ).rejects.toThrow(UnauthorizedError);
+      await expect(userService.refreshAccessToken(session.refreshToken!)).rejects.toThrow(
+        UnauthorizedError
+      );
     });
   });
 
@@ -293,9 +290,7 @@ describe('UserService', () => {
     });
 
     it('should throw NotFoundError for non-existent user', async () => {
-      await expect(
-        userService.getUserById('non-existent-id')
-      ).rejects.toThrow();
+      await expect(userService.getUserById('non-existent-id')).rejects.toThrow();
     });
   });
 

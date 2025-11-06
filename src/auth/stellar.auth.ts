@@ -20,11 +20,7 @@ export class StellarAuth {
    * @param signature - Base64-encoded signature
    * @returns true if signature is valid
    */
-  static verifySignature(
-    publicKey: string,
-    challenge: string,
-    signature: string
-  ): boolean {
+  static verifySignature(publicKey: string, challenge: string, signature: string): boolean {
     try {
       // Validate public key format
       if (!publicKey.startsWith('G') || publicKey.length !== 56) {
@@ -131,9 +127,7 @@ export class StellarAuth {
   static isValidPublicKey(publicKey: string): boolean {
     try {
       return (
-        publicKey.startsWith('G') &&
-        publicKey.length === 56 &&
-        /^G[A-Z2-7]{55}$/.test(publicKey)
+        publicKey.startsWith('G') && publicKey.length === 56 && /^G[A-Z2-7]{55}$/.test(publicKey)
       );
     } catch {
       return false;

@@ -29,9 +29,9 @@ describe('UserRepository', () => {
 
       await userRepository.create({ stellarPublicKey: publicKey });
 
-      await expect(
-        userRepository.create({ stellarPublicKey: publicKey })
-      ).rejects.toThrow(ConflictError);
+      await expect(userRepository.create({ stellarPublicKey: publicKey })).rejects.toThrow(
+        ConflictError
+      );
     });
 
     it('should throw ConflictError for duplicate email', async () => {
@@ -87,7 +87,7 @@ describe('UserRepository', () => {
   describe('findByEmail', () => {
     it('should find user by email', async () => {
       const email = 'test@example.com';
-      const { user } = await createTestUser({ email });
+      await createTestUser({ email });
 
       const found = await userRepository.findByEmail(email);
 
@@ -128,9 +128,9 @@ describe('UserRepository', () => {
       const { user: user1 } = await createTestUser({ email: email1 });
       await createTestUser({ email: email2 });
 
-      await expect(
-        userRepository.update(user1.id, { email: email2 })
-      ).rejects.toThrow(ConflictError);
+      await expect(userRepository.update(user1.id, { email: email2 })).rejects.toThrow(
+        ConflictError
+      );
     });
   });
 
