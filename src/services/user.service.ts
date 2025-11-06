@@ -46,7 +46,7 @@ export class UserService {
       user = await userRepository.create({
         stellarPublicKey: publicKey,
       });
-      logger.info('New user auto-registered via Stellar auth', { userId: user.id });
+      logger.info({ userId: user.id }, 'New user auto-registered via Stellar auth');
     }
 
     // Check if user is active
@@ -132,7 +132,7 @@ export class UserService {
       bio: data.bio,
     });
 
-    logger.info('New user registered', { userId: user.id });
+    logger.info({ userId: user.id }, 'New user registered');
 
     return user;
   }
@@ -194,7 +194,7 @@ export class UserService {
    */
   async logout(jti: string): Promise<void> {
     await sessionRepository.revoke(jti, 'User logout');
-    logger.info('User logged out', { jti });
+    logger.info({ jti }, 'User logged out');
   }
 
   /**
@@ -252,7 +252,7 @@ export class UserService {
       refreshToken,
     });
 
-    logger.info('Auth tokens generated', { userId: user.id, jti });
+    logger.info({ userId: user.id, jti }, 'Auth tokens generated');
 
     return {
       accessToken,

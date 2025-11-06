@@ -15,7 +15,7 @@ export async function errorHandler(
   reply: FastifyReply
 ) {
   // Log error with context
-  logger.error('Request error', {
+  logger.error({
     error: {
       name: error.name,
       message: error.message,
@@ -31,7 +31,7 @@ export async function errorHandler(
         'content-type': request.headers['content-type'],
       },
     },
-  });
+  }, 'Request error');
 
   // Handle custom AppError
   if (error instanceof AppError) {

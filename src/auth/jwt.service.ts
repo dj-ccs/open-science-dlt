@@ -36,7 +36,7 @@ export class JWTService {
     const decoded = jwt.decode(token) as JWTPayload;
     const expiresAt = new Date(decoded.exp * 1000);
 
-    logger.debug('Access token generated', { userId: payload.sub, jti });
+    logger.debug({ userId: payload.sub, jti }, 'Access token generated');
 
     return { token, jti, expiresAt };
   }
@@ -50,7 +50,7 @@ export class JWTService {
       issuer: 'open-science-dlt',
     }) as string;
 
-    logger.debug('Refresh token generated', { userId });
+    logger.debug({ userId }, 'Refresh token generated');
 
     return token;
   }

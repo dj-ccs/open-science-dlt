@@ -42,9 +42,9 @@ export class AuthController {
   ): Promise<void> {
     const { publicKey, challenge, signature } = request.body;
 
-    logger.info('Stellar authentication attempt', {
+    logger.info({
       publicKey: StellarAuth.formatPublicKey(publicKey),
-    });
+    }, 'Stellar authentication attempt');
 
     const authResponse = await userService.authenticateWithStellar(publicKey, challenge, signature);
 
@@ -61,7 +61,7 @@ export class AuthController {
   ): Promise<void> {
     const { email, password } = request.body;
 
-    logger.info('Email authentication attempt', { email });
+    logger.info({ email }, 'Email authentication attempt');
 
     const authResponse = await userService.authenticateWithEmail(email, password);
 
@@ -78,10 +78,10 @@ export class AuthController {
   ): Promise<void> {
     const data = request.body;
 
-    logger.info('User registration attempt', {
+    logger.info({
       stellarKey: StellarAuth.formatPublicKey(data.stellarPublicKey),
       email: data.email,
-    });
+    }, 'User registration attempt');
 
     const user = await userService.register(data);
 

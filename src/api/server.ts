@@ -97,7 +97,7 @@ export async function buildServer(): Promise<FastifyInstance> {
           database: 'connected',
         });
       } catch (error) {
-        logger.error('Health check failed', { error });
+        logger.error({ error }, 'Health check failed');
         return reply.code(503).send({
           status: 'error',
           timestamp: new Date().toISOString(),
@@ -142,7 +142,7 @@ export async function startServer(): Promise<FastifyInstance> {
     logger.info(`📚 API documentation available at http://${host}:${port}/documentation`);
     logger.info(`🏥 Health check available at http://${host}:${port}/health`);
   } catch (err) {
-    logger.error('Failed to start server', { error: err });
+    logger.error({ error: err }, 'Failed to start server');
     process.exit(1);
   }
 

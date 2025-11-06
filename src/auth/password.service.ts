@@ -21,7 +21,7 @@ export class PasswordService {
       logger.debug('Password hashed successfully');
       return hash;
     } catch (error) {
-      logger.error('Error hashing password', { error });
+      logger.error({ error }, 'Error hashing password');
       throw new Error('Failed to hash password');
     }
   }
@@ -37,7 +37,7 @@ export class PasswordService {
     try {
       return await bcrypt.compare(password, hash);
     } catch (error) {
-      logger.error('Error comparing password', { error });
+      logger.error({ error }, 'Error comparing password');
       return false;
     }
   }
