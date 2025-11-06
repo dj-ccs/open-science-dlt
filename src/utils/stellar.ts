@@ -36,7 +36,7 @@ export class StellarManager {
       const account = await this.server.loadAccount(sourcePublicKey);
 
       return new TransactionBuilder(account, {
-        fee: await this.server.fetchBaseFee(),
+        fee: String(await this.server.fetchBaseFee()),
         networkPassphrase: this.networkPassphrase,
       })
         .addOperation(
@@ -77,7 +77,7 @@ export class StellarManager {
       const account = await this.server.loadAccount(authorPublicKey);
 
       return new TransactionBuilder(account, {
-        fee: await this.server.fetchBaseFee(),
+        fee: String(await this.server.fetchBaseFee()),
         networkPassphrase: this.networkPassphrase,
       })
         .addOperation(
@@ -112,7 +112,7 @@ export class StellarManager {
         const memo = tx.memo;
         return (
           memo === 'paper_submission' &&
-          tx.operations.some(op => op.type === 'manage_data' && op.value === paperHash)
+          (tx.operations as any).some((op: any) => op.type === 'manage_data' && op.value === paperHash)
         );
       });
     } catch (error) {

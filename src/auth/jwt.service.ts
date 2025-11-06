@@ -26,11 +26,15 @@ export class JWTService {
   } {
     const jti = crypto.randomUUID();
 
-    const token = jwt.sign({ ...payload, jti }, this.jwtSecret, {
-      expiresIn: this.jwtExpiration,
-      issuer: 'open-science-dlt',
-      audience: 'open-science-dlt-api',
-    });
+    const token = (jwt.sign as any)(
+      { ...payload, jti },
+      this.jwtSecret,
+      {
+        expiresIn: this.jwtExpiration,
+        issuer: 'open-science-dlt',
+        audience: 'open-science-dlt-api',
+      }
+    ) as string;
 
     // Calculate expiration date
     const decoded = jwt.decode(token) as JWTPayload;
@@ -45,10 +49,14 @@ export class JWTService {
    * Generate refresh token
    */
   static generateRefreshToken(userId: string): string {
-    const token = jwt.sign({ sub: userId, type: 'refresh' }, this.refreshTokenSecret, {
-      expiresIn: this.refreshTokenExpiration,
-      issuer: 'open-science-dlt',
-    });
+    const token = (jwt.sign as any)(
+      { sub: userId, type: 'refresh' },
+      this.refreshTokenSecret,
+      {
+        expiresIn: this.refreshTokenExpiration,
+        issuer: 'open-science-dlt',
+      }
+    ) as string;
 
     logger.debug('Refresh token generated', { userId });
 

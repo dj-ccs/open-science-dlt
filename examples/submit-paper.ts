@@ -26,8 +26,9 @@ async function submitPaperExample() {
     console.log('Transaction ID:', result.transaction);
 
     // Monitor the paper's status
-    const paper = await platform.getPaper(result.hash);
-    console.log('Paper Status:', paper.status);
+    // TODO: Implement getPaper() method
+    // const paper = await platform.getPaper(result.hash);
+    // console.log('Paper Status:', paper.status);
   } catch (error) {
     console.error('Error submitting paper:', error);
   }

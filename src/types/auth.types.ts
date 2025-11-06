@@ -67,9 +67,10 @@ export interface RefreshTokenResponse {
 
 /**
  * Fastify Request with authenticated user
+ * Note: Use (request as any).user as JWTPayload in controllers
  */
-declare module 'fastify' {
-  interface FastifyRequest {
-    user?: JWTPayload;
-  }
-}
+// declare module 'fastify' {
+//   interface FastifyRequest {
+//     user?: JWTPayload;
+//   }
+// }

@@ -7,6 +7,7 @@ import {
   RegisterRequest,
   RefreshTokenRequest,
 } from '../schemas/auth.schema';
+import { JWTPayload } from '../../types/auth.types';
 import { logger } from '../../utils/logger';
 
 /**
@@ -115,7 +116,7 @@ export class AuthController {
    * Logout user (revoke session)
    */
   async logout(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const user = request.user!;
+    const user = (request as any).user as JWTPayload;
 
     await userService.logout(user.jti);
 
@@ -129,7 +130,7 @@ export class AuthController {
    * Get current user profile
    */
   async getCurrentUser(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const userId = request.user!.sub;
+    const userId = ((request as any).user as JWTPayload).sub;
 
     const user = await userService.getUserById(userId);
 

@@ -8,6 +8,14 @@ jest.mock('stellar-sdk');
 describe('OpenSciencePlatform', () => {
   let platform: OpenSciencePlatform;
 
+  const mockPaperData = {
+    title: 'Test Paper',
+    abstract: 'Test abstract',
+    authors: ['TEST_KEY_1'],
+    keywords: ['test'],
+    content: 'Test content',
+  };
+
   beforeEach(() => {
     platform = new OpenSciencePlatform({
       network: 'testnet',
@@ -16,13 +24,6 @@ describe('OpenSciencePlatform', () => {
   });
 
   describe('Paper Submission', () => {
-    const mockPaperData = {
-      title: 'Test Paper',
-      abstract: 'Test abstract',
-      authors: ['TEST_KEY_1'],
-      keywords: ['test'],
-      content: 'Test content',
-    };
 
     test('should successfully submit a paper', async () => {
       const result = await platform.submitPaper(mockPaperData);
@@ -38,7 +39,7 @@ describe('OpenSciencePlatform', () => {
 
     test('should handle submission errors', async () => {
       // Simulate IPFS error
-      jest.spyOn(platform['ipfs'], 'uploadContent').mockRejectedValue(new Error());
+      jest.spyOn(platform['ipfs'] as any, 'add').mockRejectedValue(new Error('IPFS error'));
       await expect(platform.submitPaper(mockPaperData)).rejects.toThrow();
     });
   });
@@ -47,10 +48,10 @@ describe('OpenSciencePlatform', () => {
     const mockReviewData = {
       paperHash: 'QmTest...',
       reviewerKey: 'TEST_KEY_2',
-      content: 'Review content',
-      recommendation: ReviewRecommendation.ACCEPT,
-      confidence: ReviewConfidence.HIGH,
+      comments: 'Review content',
+      recommendation: 'accept' as const,
       conflicts: [],
+      content: 'Full review content',
     };
 
     test('should successfully submit a review', async () => {
@@ -101,7 +102,7 @@ describe('OpenSciencePlatform', () => {
 
   describe('Error Handling', () => {
     test('should handle network errors', async () => {
-      jest.spyOn(platform['ipfs'], 'uploadContent').mockRejectedValue(new Error('Network error'));
+      jest.spyOn(platform['ipfs'] as any, 'add').mockRejectedValue(new Error('Network error'));
       await expect(platform.submitPaper({} as any)).rejects.toThrow();
     });
 
@@ -110,8 +111,8 @@ describe('OpenSciencePlatform', () => {
     });
 
     test('should handle transaction errors', async () => {
-      jest.spyOn(platform['stellar'], 'submitTransaction').mockRejectedValue(new Error());
-      await expect(platform.submitPaper({} as any)).rejects.toThrow();
+      jest.spyOn(platform as any, 'createSubmissionTransaction').mockRejectedValue(new Error('TX error'));
+      await expect(platform.submitPaper(mockPaperData)).rejects.toThrow();
     });
   });
 });

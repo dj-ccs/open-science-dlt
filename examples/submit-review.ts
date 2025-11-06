@@ -12,6 +12,9 @@ async function submitReviewExample() {
   const reviewData = {
     paperHash: 'QmX...', // IPFS hash of the paper being reviewed
     reviewerKey: 'REVIEWER_PUBLIC_KEY',
+    comments: 'The paper presents valuable research with some areas for improvement',
+    recommendation: 'revise' as const,
+    conflicts: [], // No conflicts of interest
     content: `
 # Paper Review
 
@@ -39,9 +42,6 @@ This paper presents a novel approach to quantum error correction that shows prom
 ## Conclusion
 The paper makes a valuable contribution but requires minor revisions.
         `,
-    recommendation: ReviewRecommendation.MINOR_REVISION,
-    confidence: ReviewConfidence.HIGH,
-    conflicts: [], // No conflicts of interest
   };
 
   try {
@@ -54,8 +54,9 @@ The paper makes a valuable contribution but requires minor revisions.
     console.log('Transaction ID:', result.transaction);
 
     // Get updated paper status
-    const paper = await platform.getPaper(reviewData.paperHash);
-    console.log('Updated Paper Status:', paper.status);
+    // TODO: Implement getPaper() method
+    // const paper = await platform.getPaper(reviewData.paperHash);
+    // console.log('Updated Paper Status:', paper.status);
   } catch (error) {
     console.error('Error submitting review:', error);
   }

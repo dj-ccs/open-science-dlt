@@ -5,13 +5,13 @@ import { EventEmitter } from './EventEmitter';
 interface PaperMetadata {
   title: string;
   abstract: string;
-  _authors: string[];
+  authors: string[];
   keywords: string[];
   timestamp: number;
 }
 
 interface ReviewMetadata {
-  _reviewerKey: string;
+  reviewerKey: string;
   paperHash: string;
   comments: string;
   recommendation: 'accept' | 'revise' | 'reject';
@@ -20,7 +20,7 @@ interface ReviewMetadata {
 }
 
 interface VerificationMetadata {
-  _verifierKey: string;
+  verifierKey: string;
   paperHash: string;
   methodology: string;
   results: string;
@@ -50,7 +50,7 @@ export class OpenSciencePlatform extends EventEmitter {
   }
 
   async submitPaper(
-    paper: PaperMetadata & { content: string }
+    paper: Omit<PaperMetadata, 'timestamp'> & { content: string }
   ): Promise<{ hash: string; transaction: string }> {
     try {
       // Upload paper content to IPFS
@@ -91,7 +91,7 @@ export class OpenSciencePlatform extends EventEmitter {
   }
 
   async submitReview(
-    review: ReviewMetadata & { content: string }
+    review: Omit<ReviewMetadata, 'timestamp'> & { content: string }
   ): Promise<{ hash: string; transaction: string }> {
     try {
       // Verify reviewer credentials
@@ -139,7 +139,7 @@ export class OpenSciencePlatform extends EventEmitter {
   }
 
   async submitVerification(
-    verification: VerificationMetadata & { data: string }
+    verification: Omit<VerificationMetadata, 'timestamp'> & { data: string }
   ): Promise<{ hash: string; transaction: string }> {
     try {
       // Verify credentials

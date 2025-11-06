@@ -32,7 +32,7 @@ export async function authRoutes(server: FastifyInstance) {
       },
     },
     handler: authController.generateChallenge.bind(authController),
-  });
+  } as any);
 
   /**
    * Authenticate with Stellar public key signature
@@ -48,7 +48,7 @@ export async function authRoutes(server: FastifyInstance) {
       },
     },
     handler: authController.authenticateWithStellar.bind(authController),
-  });
+  } as any);
 
   /**
    * Authenticate with email/password
@@ -64,7 +64,7 @@ export async function authRoutes(server: FastifyInstance) {
       },
     },
     handler: authController.loginWithEmail.bind(authController),
-  });
+  } as any);
 
   /**
    * Register new user
@@ -80,7 +80,7 @@ export async function authRoutes(server: FastifyInstance) {
       },
     },
     handler: authController.register.bind(authController),
-  });
+  } as any);
 
   /**
    * Refresh access token
@@ -96,7 +96,7 @@ export async function authRoutes(server: FastifyInstance) {
       },
     },
     handler: authController.refreshToken.bind(authController),
-  });
+  } as any);
 
   /**
    * Logout (revoke session)
@@ -118,7 +118,7 @@ export async function authRoutes(server: FastifyInstance) {
       },
     },
     handler: authController.logout.bind(authController),
-  });
+  } as any);
 
   /**
    * Get current user profile
@@ -135,5 +135,5 @@ export async function authRoutes(server: FastifyInstance) {
       },
     },
     handler: authController.getCurrentUser.bind(authController),
-  });
+  } as any);
 }
