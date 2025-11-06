@@ -21,6 +21,9 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
+    - name: Generate Prisma Client
+      run: npm run db:generate
+
     - name: Run ESLint
       run: npm run lint
 
@@ -28,13 +31,37 @@ jobs:
       run: npm run type-check
 
     - name: Run Prettier check
-      run: npm run format-check
+      run: npm run format:check
 
   sonarcloud:
     runs-on: ubuntu-latest
+    # Only run if SONAR_TOKEN is configured
+    if: ${{ secrets.SONAR_TOKEN != '' }}
     steps:
     - uses: actions/checkout@v2
-    
+      with:
+        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18.x'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Generate Prisma Client
+      run: npm run db:generate
+
+    - name: Run tests for coverage
+      run: npm test
+      env:
+        DATABASE_URL: postgresql://test:test@localhost:5432/test
+        JWT_SECRET: test-secret
+        REFRESH_TOKEN_SECRET: test-secret
+        NODE_ENV: test
+      continue-on-error: true
+
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@master
       env:
