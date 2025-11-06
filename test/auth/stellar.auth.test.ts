@@ -96,7 +96,7 @@ describe('StellarAuth', () => {
 
     it('should reject an expired challenge', () => {
       // Create challenge with old timestamp (6 minutes ago)
-      const oldTimestamp = Date.now() - (6 * 60 * 1000);
+      const oldTimestamp = Date.now() - 6 * 60 * 1000;
       const challenge = `open-science-dlt-auth:${oldTimestamp}:abcdef1234567890`;
 
       const isValid = StellarAuth.isChallengeValid(challenge);
@@ -120,7 +120,7 @@ describe('StellarAuth', () => {
 
     it('should accept challenge within 5 minute window', () => {
       // Create challenge 4 minutes ago
-      const recentTimestamp = Date.now() - (4 * 60 * 1000);
+      const recentTimestamp = Date.now() - 4 * 60 * 1000;
       const challenge = `open-science-dlt-auth:${recentTimestamp}:abcdef1234567890`;
 
       const isValid = StellarAuth.isChallengeValid(challenge);

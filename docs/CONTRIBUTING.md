@@ -5,6 +5,7 @@ We're thrilled that you're interested in contributing to OpenScienceDLT! This do
 ## Why Contribute?
 
 By contributing to OpenScienceDLT, you're helping to:
+
 - Democratize access to scientific knowledge
 - Prevent manipulation of research
 - Create transparency in peer review
@@ -13,6 +14,7 @@ By contributing to OpenScienceDLT, you're helping to:
 ## How to Contribute
 
 ### 1. Finding Ways to Help
+
 - Check our [Issues](../../issues) page
 - Review our [Project Board](../../projects)
 - Test the platform and report bugs
@@ -20,6 +22,7 @@ By contributing to OpenScienceDLT, you're helping to:
 - Add test cases
 
 ### 2. Making Changes
+
 1. Fork the repository
 2. Create a new branch: `git checkout -b feature/your-feature-name`
 3. Make your changes
@@ -30,6 +33,7 @@ By contributing to OpenScienceDLT, you're helping to:
 8. Submit a Pull Request
 
 ### 3. Pull Request Guidelines
+
 - Provide a clear description of the changes
 - Link to any relevant issues
 - Include test cases
@@ -60,6 +64,7 @@ npm run build
 ## Questions?
 
 Feel free to:
+
 - Open an issue
 - Start a discussion
 - Join our community chat

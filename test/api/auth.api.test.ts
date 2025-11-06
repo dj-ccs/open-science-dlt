@@ -7,7 +7,6 @@ import { buildServer } from '../../src/api/server';
 import { FastifyInstance } from 'fastify';
 import { createTestUser, generateStellarKeypair, signChallenge } from '../helpers/factories';
 import { StellarAuth } from '../../src/auth/stellar.auth';
-import { prisma } from '../setup';
 
 describe('Authentication API', () => {
   let server: FastifyInstance;

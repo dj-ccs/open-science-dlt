@@ -16,7 +16,7 @@ import { prisma, disconnectDatabase } from '../database/client';
  */
 export async function buildServer(): Promise<FastifyInstance> {
   const server = Fastify({
-    logger: logger,
+    logger: logger as any,
     requestIdHeader: 'x-request-id',
     requestIdLogLabel: 'requestId',
     disableRequestLogging: false,
@@ -75,7 +75,7 @@ export async function buildServer(): Promise<FastifyInstance> {
   await registerRoutes(server);
 
   // Global error handler (must be registered after routes)
-  server.setErrorHandler(errorHandler);
+  server.setErrorHandler(errorHandler as any);
 
   // Health check endpoint
   server.get('/health', {
@@ -84,7 +84,7 @@ export async function buildServer(): Promise<FastifyInstance> {
       summary: 'Health check',
       description: 'Check if the API is running and database is connected',
     },
-    handler: async (request, reply) => {
+    handler: async (request: any, reply: any) => {
       try {
         // Check database connection
         await prisma.$queryRaw`SELECT 1`;
@@ -105,7 +105,7 @@ export async function buildServer(): Promise<FastifyInstance> {
         });
       }
     },
-  });
+  } as any);
 
   // Graceful shutdown handler
   const shutdown = async () => {

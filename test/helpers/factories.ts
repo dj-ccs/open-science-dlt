@@ -77,20 +77,26 @@ export async function createTestSession(userId: string, jti: string) {
 /**
  * Create a test paper
  */
-export async function createTestPaper(submitterId: string, overrides?: {
-  title?: string;
-  abstract?: string;
-  keywords?: string[];
-  ipfsHash?: string;
-  stellarTxHash?: string;
-}) {
+export async function createTestPaper(
+  submitterId: string,
+  overrides?: {
+    title?: string;
+    abstract?: string;
+    keywords?: string[];
+    ipfsHash?: string;
+    stellarTxHash?: string;
+  }
+) {
   return await prisma.paper.create({
     data: {
       submitterId,
       ipfsHash: overrides?.ipfsHash || `Qm${Math.random().toString(36).substring(2, 15)}`,
-      stellarTxHash: overrides?.stellarTxHash || `tx_${Math.random().toString(36).substring(2, 15)}`,
+      stellarTxHash:
+        overrides?.stellarTxHash || `tx_${Math.random().toString(36).substring(2, 15)}`,
       title: overrides?.title || 'Test Paper',
-      abstract: overrides?.abstract || 'This is a test paper abstract with sufficient length for validation.',
+      abstract:
+        overrides?.abstract ||
+        'This is a test paper abstract with sufficient length for validation.',
       keywords: overrides?.keywords || ['test', 'paper', 'keywords'],
       authorKeys: [],
       authorOrcids: [],

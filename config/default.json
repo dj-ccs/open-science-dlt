@@ -47,14 +47,7 @@
     "maxContentSize": 52428800
   },
   "validation": {
-    "allowedFileTypes": [
-      "pdf",
-      "md",
-      "tex",
-      "csv",
-      "json",
-      "zip"
-    ],
+    "allowedFileTypes": ["pdf", "md", "tex", "csv", "json", "zip"],
     "maxFileSize": 10485760
   },
   "security": {

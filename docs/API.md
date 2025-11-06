@@ -15,29 +15,33 @@ const platform = new OpenSciencePlatform({
 ### Paper Management
 
 #### Submit Paper
+
 ```typescript
-async submitPaper(paper: PaperMetadata & { content: string }): Promise<{ 
-    hash: string; 
-    transaction: string 
+async submitPaper(paper: PaperMetadata & { content: string }): Promise<{
+    hash: string;
+    transaction: string
 }>
 ```
 
 #### Get Paper
+
 ```typescript
 async getPaper(hash: string): Promise<ResearchPaper>
 ```
 
 #### Update Paper
+
 ```typescript
-async updatePaper(paper: ResearchPaper): Promise<{ 
-    hash: string; 
-    transaction: string 
+async updatePaper(paper: ResearchPaper): Promise<{
+    hash: string;
+    transaction: string
 }>
 ```
 
 ### Peer Review
 
 #### Submit Review
+
 ```typescript
 async submitReview(review: ReviewMetadata & { content: string }): Promise<{
     hash: string;
@@ -46,6 +50,7 @@ async submitReview(review: ReviewMetadata & { content: string }): Promise<{
 ```
 
 #### Get Review
+
 ```typescript
 async getReview(hash: string): Promise<PeerReview>
 ```
@@ -53,9 +58,10 @@ async getReview(hash: string): Promise<PeerReview>
 ### Verification
 
 #### Submit Verification
+
 ```typescript
-async submitVerification(verification: VerificationMetadata & { 
-    data: string 
+async submitVerification(verification: VerificationMetadata & {
+    data: string
 }): Promise<{
     hash: string;
     transaction: string
@@ -63,6 +69,7 @@ async submitVerification(verification: VerificationMetadata & {
 ```
 
 #### Get Verification
+
 ```typescript
 async getVerification(hash: string): Promise<Verification>
 ```
@@ -70,16 +77,19 @@ async getVerification(hash: string): Promise<Verification>
 ## Events
 
 ### Paper Events
+
 - `paperSubmitted`
 - `paperUpdated`
 - `paperStatusChanged`
 
 ### Review Events
+
 - `reviewSubmitted`
 - `reviewValidated`
 - `reviewPublished`
 
 ### Verification Events
+
 - `verificationSubmitted`
 - `verificationStarted`
 - `verificationCompleted`
@@ -96,22 +106,24 @@ All API methods may throw the following errors:
 ## Examples
 
 ### Submitting a Paper
+
 ```typescript
 const result = await platform.submitPaper({
-    title: 'Research Title',
-    abstract: 'Abstract text...',
-    authors: ['PUBLIC_KEY'],
-    content: 'Full paper content...'
+  title: 'Research Title',
+  abstract: 'Abstract text...',
+  authors: ['PUBLIC_KEY'],
+  content: 'Full paper content...',
 });
 ```
 
 ### Submitting a Review
+
 ```typescript
 const result = await platform.submitReview({
-    paperHash: 'PAPER_HASH',
-    reviewerKey: 'REVIEWER_KEY',
-    content: 'Review content...',
-    recommendation: ReviewRecommendation.ACCEPT
+  paperHash: 'PAPER_HASH',
+  reviewerKey: 'REVIEWER_KEY',
+  content: 'Review content...',
+  recommendation: ReviewRecommendation.ACCEPT,
 });
 ```
 

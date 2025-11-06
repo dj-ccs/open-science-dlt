@@ -3,6 +3,7 @@
  */
 
 export class AppError extends Error {
+  // eslint-disable-next-line prettier/prettier
   constructor(
     public message: string,
     public statusCode: number = 500,
@@ -23,14 +24,14 @@ export class ValidationError extends AppError {
 }
 
 export class UnauthorizedError extends AppError {
-  constructor(message: string = 'Unauthorized') {
+  constructor(message = 'Unauthorized') {
     super(message, 401, 'UNAUTHORIZED');
     this.name = 'UnauthorizedError';
   }
 }
 
 export class ForbiddenError extends AppError {
-  constructor(message: string = 'Forbidden') {
+  constructor(message = 'Forbidden') {
     super(message, 403, 'FORBIDDEN');
     this.name = 'ForbiddenError';
   }

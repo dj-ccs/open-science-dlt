@@ -5,15 +5,12 @@ import { z } from 'zod';
 // ============================================================================
 
 export const stellarAuthRequestSchema = z.object({
-  publicKey: z.string()
+  publicKey: z
+    .string()
     .length(56, 'Stellar public key must be 56 characters')
     .regex(/^G[A-Z2-7]{55}$/, 'Invalid Stellar public key format'),
-  challenge: z.string()
-    .min(10, 'Challenge too short')
-    .max(200, 'Challenge too long'),
-  signature: z.string()
-    .min(1, 'Signature required')
-    .max(500, 'Signature too long'),
+  challenge: z.string().min(10, 'Challenge too short').max(200, 'Challenge too long'),
+  signature: z.string().min(1, 'Signature required').max(500, 'Signature too long'),
 });
 
 export const stellarAuthResponseSchema = z.object({
@@ -35,10 +32,9 @@ export const stellarAuthResponseSchema = z.object({
 // ============================================================================
 
 export const emailAuthRequestSchema = z.object({
-  email: z.string()
-    .email('Invalid email format')
-    .toLowerCase(),
-  password: z.string()
+  email: z.string().email('Invalid email format').toLowerCase(),
+  password: z
+    .string()
     .min(8, 'Password must be at least 8 characters')
     .max(100, 'Password too long'),
 });
@@ -50,27 +46,19 @@ export const emailAuthResponseSchema = stellarAuthResponseSchema;
 // ============================================================================
 
 export const registerRequestSchema = z.object({
-  stellarPublicKey: z.string()
+  stellarPublicKey: z
+    .string()
     .length(56)
     .regex(/^G[A-Z2-7]{55}$/),
-  email: z.string()
-    .email()
-    .toLowerCase()
-    .optional(),
-  password: z.string()
-    .min(8)
-    .max(100)
-    .optional(),
-  displayName: z.string()
+  email: z.string().email().toLowerCase().optional(),
+  password: z.string().min(8).max(100).optional(),
+  displayName: z
+    .string()
     .min(2, 'Display name must be at least 2 characters')
     .max(100, 'Display name too long')
     .optional(),
-  affiliation: z.string()
-    .max(200)
-    .optional(),
-  bio: z.string()
-    .max(1000)
-    .optional(),
+  affiliation: z.string().max(200).optional(),
+  bio: z.string().max(1000).optional(),
 });
 
 export const registerResponseSchema = z.object({
@@ -88,8 +76,7 @@ export const registerResponseSchema = z.object({
 // ============================================================================
 
 export const refreshTokenRequestSchema = z.object({
-  refreshToken: z.string()
-    .min(1, 'Refresh token required'),
+  refreshToken: z.string().min(1, 'Refresh token required'),
 });
 
 export const refreshTokenResponseSchema = z.object({
