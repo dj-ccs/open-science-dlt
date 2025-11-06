@@ -58,161 +58,347 @@ Together, we can ensure that scientific knowledge serves humanity rather than sp
 ## 📁 Repository Structure
 ```
 open-science-dlt/
-├── .github/
-│   ├── ISSUE_TEMPLATE/
-│   └── workflows/
-│       └── test.yml
+├── .github/workflows/          # CI/CD workflows
 ├── src/
-│   ├── contracts/
-│   │   ├── ResearchPaper.js
-│   │   ├── PeerReview.js
-│   │   └── Verification.js
-│   ├── platform/
-│   │   ├── OpenSciencePlatform.js
-│   │   └── EventEmitter.js
-│   └── utils/
-│       ├── ipfs.js
-│       └── stellar.js
-├── test/
-│   ├── contracts/
-│   └── platform/
-├── docs/
-│   ├── ARCHITECTURE.md
-│   ├── CONTRIBUTING.md
-│   └── API.md
-├── examples/
-│   ├── submit-paper.js
-│   ├── submit-review.js
-│   └── verify-research.js
-├── config/
-│   └── default.json
-├── package.json
-└── README.md
+│   ├── api/                    # HTTP API layer (Fastify)
+│   │   ├── controllers/        # Request handlers
+│   │   ├── middleware/         # Authentication, error handling
+│   │   ├── routes/             # API route definitions
+│   │   ├── schemas/            # Zod validation schemas
+│   │   └── server.ts           # Fastify server setup
+│   ├── auth/                   # Authentication services
+│   │   ├── jwt.service.ts      # JWT token operations
+│   │   ├── stellar.auth.ts     # Stellar signature verification
+│   │   ├── password.service.ts # Password hashing (bcrypt)
+│   │   └── orcid.service.ts    # ORCID OAuth (Phase 2B)
+│   ├── contracts/              # Data models
+│   │   ├── ResearchPaper.ts
+│   │   ├── PeerReview.ts
+│   │   └── Verification.ts
+│   ├── database/               # Database layer
+│   │   ├── client.ts           # Prisma client
+│   │   └── repositories/       # Data access layer
+│   ├── platform/               # Core platform
+│   │   ├── OpenSciencePlatform.ts
+│   │   └── EventEmitter.ts
+│   ├── services/               # Business logic
+│   │   └── user.service.ts
+│   ├── types/                  # TypeScript types
+│   ├── utils/                  # Utilities
+│   │   ├── stellar.ts
+│   │   ├── ipfs.ts
+│   │   └── logger.ts
+│   └── index.ts
+├── test/                       # Comprehensive test suite
+│   ├── api/                    # API integration tests
+│   ├── auth/                   # Authentication tests
+│   ├── repositories/           # Repository tests
+│   ├── services/               # Service tests
+│   └── setup.ts                # Test configuration
+├── prisma/
+│   └── schema.prisma           # Database schema
+├── config/                     # Configuration files
+├── docs/                       # Documentation
+└── examples/                   # Usage examples
 ```
 
 ## 🚀 Quick Start
 
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/open-science-dlt.git
-cd open-science-dlt
-```
+### Prerequisites
+- **Node.js** v16+ (v18 or v20 recommended)
+- **npm** v7+ (v9+ recommended)
+- **PostgreSQL** 15+ (for database)
+- **Git**
 
-2. Install dependencies:
+### 1. Clone and Install
+
 ```bash
+git clone https://github.com/dj-ccs/open-science-dlt.git
+cd open-science-dlt
 npm install
 ```
 
-3. Configure your Stellar account:
+### 2. Database Setup
+
+Create a PostgreSQL database:
 ```bash
-cp config/default.example.json config/default.json
-# Edit config/default.json with your Stellar account details
+createdb open_science_dlt
+createdb open_science_dlt_test  # For tests
 ```
 
-4. Run tests:
+### 3. Environment Configuration
+
+Copy the example environment file:
 ```bash
-npm test
+cp .env.example .env
 ```
 
-## Development Setup
+Edit `.env` with your configuration:
+```env
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/open_science_dlt?schema=public
 
-### Prerequisites
-- Node.js (v16 or higher)
-- npm (v7 or higher)
-- Git
+# Authentication (Generate secure secrets!)
+JWT_SECRET=your-super-secret-jwt-key
+REFRESH_TOKEN_SECRET=your-super-secret-refresh-key
 
-### Environment Setup
+# Stellar Blockchain
+STELLAR_NETWORK=testnet
+STELLAR_SECRET_KEY=S...  # Your Stellar secret key
 
-1. **Code Quality Tools**
+# API Configuration
+API_HOST=0.0.0.0
+API_PORT=3000
+```
 
-Install ESLint extension for your IDE:
-- VS Code: "ESLint" by Microsoft
-- IntelliJ/WebStorm: Enable ESLint in Settings
+### 4. Initialize Database
 
-Configure Prettier:
+Run Prisma migrations:
 ```bash
-# Install Prettier extension
-# VS Code: "Prettier - Code formatter"
-# Enable format on save in your editor
-
-# Check formatting
-npm run format:check
-
-# Fix formatting
-npm run format
+npm run db:generate  # Generate Prisma client
+npm run db:migrate   # Run database migrations
 ```
 
-## 💻 Usage Example
+### 5. Start the API Server
 
-```javascript
-const { OpenSciencePlatform } = require('./src/platform/OpenSciencePlatform');
-const { ResearchPaper } = require('./src/contracts/ResearchPaper');
-
-// Initialize platform
-const platform = new OpenSciencePlatform({
-  network: 'testnet', // or 'public' for mainnet
-  ipfsNode: 'https://ipfs.infura.io:5001'
-});
-
-// Submit research paper
-async function submitPaper() {
-  const paper = new ResearchPaper({
-    title: 'Novel Research',
-    abstract: 'Research abstract...',
-    authors: ['PUBLIC_KEY_1'],
-    content: 'Full paper content...'
-  });
-
-  const result = await platform.submitPaper(paper);
-  console.log('Paper submitted:', result.hash);
-}
+```bash
+npm run dev:api  # Development mode with hot reload
 ```
 
-## 🔧 Configuration
+The API will be available at `http://localhost:3000`
 
-The platform can be configured using environment variables or the `config/default.json` file:
+Check health: `http://localhost:3000/health`
 
-```json
+### 6. Run Tests
+
+```bash
+npm test              # Run all tests with coverage
+npm run test:watch    # Watch mode
+npm run test:api      # API tests only
+```
+
+## 📚 API Documentation
+
+### Authentication Endpoints
+
+The platform provides a complete REST API for authentication and user management:
+
+**Base URL:** `http://localhost:3000/api/v1`
+
+#### Generate Challenge
+```bash
+GET /auth/challenge
+```
+
+Returns a time-limited challenge for Stellar signature authentication.
+
+#### Stellar Authentication
+```bash
+POST /auth/stellar
+Content-Type: application/json
+
 {
-  "stellar": {
-    "network": "testnet",
-    "secretKey": "YOUR_SECRET_KEY"
-  },
-  "ipfs": {
-    "node": "https://ipfs.infura.io:5001",
-    "gateway": "https://ipfs.io/ipfs"
-  },
-  "platform": {
-    "minReviews": 3,
-    "minVerifications": 2,
-    "reviewTimeout": 604800
-  }
+  "publicKey": "GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  "challenge": "open-science-dlt-auth:1699000000000:abc123",
+  "signature": "base64-encoded-signature"
 }
 ```
 
-## Available Scripts
+#### Email/Password Login
+```bash
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "SecurePassword123!"
+}
+```
+
+#### Register New User
+```bash
+POST /auth/register
+Content-Type: application/json
+
+{
+  "stellarPublicKey": "GXXXXXXXXX...",
+  "email": "user@example.com",
+  "password": "SecurePassword123!",
+  "displayName": "John Doe"
+}
+```
+
+#### Get Current User
+```bash
+GET /auth/me
+Authorization: Bearer <access-token>
+```
+
+See [docs/API.md](docs/API.md) for complete API documentation.
+
+## Development Workflow
+
+### Available Scripts
 
 ```bash
 # Development
-npm run dev             # Start development server
-npm run build           # Build for production
-npm run clean           # Clean build files
+npm run dev:api        # Start API server (Fastify)
+npm run dev            # Start platform (original)
+
+# Database
+npm run db:generate    # Generate Prisma client
+npm run db:migrate     # Run migrations
+npm run db:studio      # Open Prisma Studio (DB GUI)
+npm run db:seed        # Seed database
+npm run db:reset       # Reset database
+
+# Building
+npm run build          # Build TypeScript
+npm run clean          # Clean build artifacts
 
 # Testing
-npm test               # Run tests
+npm test               # Run all tests
 npm run test:watch     # Watch mode
+npm run test:api       # API tests only
 
 # Code Quality
 npm run lint           # Check code style
 npm run lint:fix       # Fix code style
 npm run format         # Format code
-npm run type-check     # Check types
+npm run type-check     # TypeScript check
 
 # Documentation
-npm run docs           # Generate documentation
+npm run docs           # Generate TypeDoc
 
 # Security
 npm run security-audit # Run security checks
+```
+
+### Project Structure Deep Dive
+
+**API Layer** (`src/api/`):
+- **Routes**: Define endpoints and attach handlers
+- **Controllers**: Handle HTTP requests/responses
+- **Middleware**: Authentication, error handling, logging
+- **Schemas**: Zod validation for request/response
+
+**Authentication** (`src/auth/`):
+- **JWT Service**: Token generation and verification
+- **Stellar Auth**: Signature-based authentication
+- **Password Service**: bcrypt hashing and validation
+
+**Database** (`src/database/`):
+- **Repositories**: Data access layer (CRUD operations)
+- **Prisma Client**: Type-safe database client
+
+**Services** (`src/services/`):
+- Business logic layer
+- Orchestrates repositories and external services
+
+### Code Quality Tools
+
+The project uses:
+- **ESLint**: Code linting with TypeScript support
+- **Prettier**: Code formatting
+- **Husky**: Git hooks for pre-commit checks
+- **Jest**: Testing framework with 75%+ coverage target
+- **TypeScript**: Static typing (strict mode)
+
+Install IDE extensions:
+- **VS Code**: ESLint, Prettier, Prisma
+- **IntelliJ/WebStorm**: Enable ESLint, Prettier plugins
+
+## 💻 Usage Examples
+
+### Using the REST API
+
+**1. Generate Challenge and Authenticate**
+
+```bash
+# Step 1: Get challenge
+curl http://localhost:3000/api/v1/auth/challenge
+
+# Response:
+# {
+#   "challenge": "open-science-dlt-auth:1699000000000:abc123...",
+#   "expiresAt": "2024-01-01T12:05:00.000Z"
+# }
+
+# Step 2: Sign challenge with Stellar key (use your wallet/SDK)
+# Then authenticate:
+curl -X POST http://localhost:3000/api/v1/auth/stellar \
+  -H "Content-Type: application/json" \
+  -d '{
+    "publicKey": "GXXXXXXXXX...",
+    "challenge": "open-science-dlt-auth:1699000000000:abc123...",
+    "signature": "base64-signature..."
+  }'
+
+# Response:
+# {
+#   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+#   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+#   "expiresIn": 3600,
+#   "user": { "id": "...", "stellarPublicKey": "...", ... }
+# }
+```
+
+**2. Access Protected Endpoints**
+
+```bash
+# Use the access token in Authorization header
+curl http://localhost:3000/api/v1/auth/me \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+### Using the Platform SDK
+
+```typescript
+import { OpenSciencePlatform } from 'open-science-dlt';
+
+// Initialize platform
+const platform = new OpenSciencePlatform({
+  network: 'testnet',
+  ipfsNode: 'https://ipfs.infura.io:5001',
+  secretKey: process.env.STELLAR_SECRET_KEY
+});
+
+// Submit research paper
+const result = await platform.submitPaper({
+  title: 'Novel Research Findings',
+  abstract: 'This paper presents...',
+  authors: ['GXXXXXXXXX...'],
+  keywords: ['research', 'science', 'innovation'],
+  content: 'Full paper content...',
+  timestamp: Date.now()
+});
+
+console.log('Paper submitted:', result.hash);
+console.log('Transaction:', result.transaction);
+```
+
+### Using with Authentication API
+
+```typescript
+import axios from 'axios';
+
+const API_BASE = 'http://localhost:3000/api/v1';
+
+// Register new user
+const response = await axios.post(`${API_BASE}/auth/register`, {
+  stellarPublicKey: 'GXXXXXXXXX...',
+  email: 'researcher@university.edu',
+  password: 'SecurePassword123!',
+  displayName: 'Dr. Jane Smith',
+  affiliation: 'Stanford University'
+});
+
+const { accessToken } = response.data;
+
+// Use token for authenticated requests
+const profile = await axios.get(`${API_BASE}/auth/me`, {
+  headers: { Authorization: `Bearer ${accessToken}` }
+});
 ```
 
 ## 🤝 Contributing
