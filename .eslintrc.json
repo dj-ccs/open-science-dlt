@@ -12,6 +12,7 @@
     "jest": true,
     "es6": true
   },
+  "ignorePatterns": ["dist", "node_modules", "coverage", "*.d.ts"],
   "rules": {
     "prettier/prettier": "error",
     "@typescript-eslint/explicit-function-return-type": "off",

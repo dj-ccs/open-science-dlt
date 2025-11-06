@@ -1,5 +1,4 @@
 import { OpenSciencePlatform } from '../../src/platform/OpenSciencePlatform';
-import { ReviewRecommendation, ReviewConfidence } from '../../src/contracts/PeerReview';
 
 // Mock IPFS and Stellar clients
 jest.mock('ipfs-http-client');
@@ -24,7 +23,6 @@ describe('OpenSciencePlatform', () => {
   });
 
   describe('Paper Submission', () => {
-
     test('should successfully submit a paper', async () => {
       const result = await platform.submitPaper(mockPaperData);
       expect(result).toHaveProperty('hash');
@@ -111,7 +109,9 @@ describe('OpenSciencePlatform', () => {
     });
 
     test('should handle transaction errors', async () => {
-      jest.spyOn(platform as any, 'createSubmissionTransaction').mockRejectedValue(new Error('TX error'));
+      jest
+        .spyOn(platform as any, 'createSubmissionTransaction')
+        .mockRejectedValue(new Error('TX error'));
       await expect(platform.submitPaper(mockPaperData)).rejects.toThrow();
     });
   });

@@ -112,7 +112,9 @@ export class StellarManager {
         const memo = tx.memo;
         return (
           memo === 'paper_submission' &&
-          (tx.operations as any).some((op: any) => op.type === 'manage_data' && op.value === paperHash)
+          (tx.operations as any).some(
+            (op: any) => op.type === 'manage_data' && op.value === paperHash
+          )
         );
       });
     } catch (error) {

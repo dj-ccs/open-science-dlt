@@ -8,7 +8,6 @@ import { FastifyInstance } from 'fastify';
 import { createTestUser, generateStellarKeypair, signChallenge } from '../helpers/factories';
 import { StellarAuth } from '../../src/auth/stellar.auth';
 
-
 describe('Authentication API', () => {
   let server: FastifyInstance;
 

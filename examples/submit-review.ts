@@ -1,5 +1,4 @@
 import { OpenSciencePlatform } from '../src/platform/OpenSciencePlatform';
-import { ReviewRecommendation, ReviewConfidence } from '../src/contracts/PeerReview';
 
 async function submitReviewExample() {
   // Initialize platform
