@@ -1,4 +1,32 @@
 {
+  "app": {
+    "name": "Open Science DLT",
+    "version": "0.2.0",
+    "environment": "development"
+  },
+  "api": {
+    "host": "0.0.0.0",
+    "port": 3000,
+    "corsOrigins": ["http://localhost:3000", "http://localhost:5173"],
+    "rateLimit": {
+      "max": 100,
+      "window": "15m"
+    }
+  },
+  "auth": {
+    "jwtSecret": "${JWT_SECRET}",
+    "jwtExpiration": "1h",
+    "refreshTokenSecret": "${REFRESH_TOKEN_SECRET}",
+    "refreshTokenExpiration": "30d",
+    "stellarChallengeWindow": "5m"
+  },
+  "database": {
+    "url": "${DATABASE_URL}",
+    "pool": {
+      "min": 2,
+      "max": 10
+    }
+  },
   "network": {
     "stellar": {
       "network": "testnet",
@@ -40,6 +68,12 @@
         "max": 50
       }
     }
+  },
+  "reputation": {
+    "paperSubmission": 10,
+    "reviewSubmission": 20,
+    "verificationSuccess": 30,
+    "reviewValidated": 15
   },
   "development": {
     "debug": false,

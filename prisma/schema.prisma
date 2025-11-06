@@ -1,0 +1,277 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// USER MANAGEMENT
+// ============================================================================
+
+model User {
+  id                String    @id @default(cuid())
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Stellar Identity (Primary)
+  stellarPublicKey  String    @unique
+
+  // Optional Email/Password Auth
+  email             String?   @unique
+  passwordHash      String?
+  emailVerified     Boolean   @default(false)
+
+  // ORCID Integration (Phase 2B)
+  orcidId           String?   @unique
+  orcidAccessToken  String?   // Encrypted in production
+  orcidVerified     Boolean   @default(false)
+  orcidProfile      Json?     // ORCID profile data
+
+  // Profile Information
+  displayName       String?
+  affiliation       String?
+  bio               String?
+  avatarUrl         String?
+
+  // Reputation System (for governance)
+  reputationScore   Int       @default(0)
+
+  // Status
+  isActive          Boolean   @default(true)
+  isBanned          Boolean   @default(false)
+  banReason         String?
+
+  // Relationships
+  sessions          Session[]
+  papers            Paper[]
+  reviews           Review[]
+  verifications     Verification[]
+  reputationHistory ReputationEvent[]
+
+  @@index([stellarPublicKey])
+  @@index([email])
+  @@index([orcidId])
+  @@map("users")
+}
+
+// ============================================================================
+// AUTHENTICATION
+// ============================================================================
+
+model Session {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  expiresAt    DateTime
+
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // JWT tracking
+  jti          String   @unique  // JWT ID for revocation
+  refreshToken String?  @unique  // For token refresh
+
+  // Session metadata
+  ipAddress    String?
+  userAgent    String?
+
+  // Revocation
+  isRevoked    Boolean  @default(false)
+  revokedAt    DateTime?
+  revokedReason String?
+
+  @@index([userId])
+  @@index([jti])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+// ============================================================================
+// RESEARCH PAPERS (Linking to blockchain)
+// ============================================================================
+
+model Paper {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Blockchain References
+  ipfsHash        String   @unique  // IPFS metadata hash
+  stellarTxHash   String   @unique  // Stellar transaction hash
+  stellarLedger   Int?              // Ledger sequence number
+
+  // Metadata (duplicated for search/filter)
+  title           String
+  abstract        String   @db.Text
+  keywords        String[]
+
+  // Authors
+  submitterId     String
+  submitter       User     @relation(fields: [submitterId], references: [id])
+  authorKeys      String[] // Stellar public keys of all authors
+
+  // ORCID author tracking (Phase 2B)
+  authorOrcids    String[] // ORCID iDs if available
+
+  // DOI (Phase 2B)
+  doi             String?  @unique
+
+  // Status tracking
+  status          PaperStatus @default(SUBMITTED)
+
+  // Relationships
+  reviews         Review[]
+  verifications   Verification[]
+
+  // Search optimization
+  @@index([ipfsHash])
+  @@index([stellarTxHash])
+  @@index([submitterId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("papers")
+}
+
+enum PaperStatus {
+  SUBMITTED
+  IN_REVIEW
+  PEER_REVIEWED
+  VERIFIED
+}
+
+// ============================================================================
+// PEER REVIEWS (Linking to blockchain)
+// ============================================================================
+
+model Review {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Blockchain References
+  ipfsHash        String   @unique
+  stellarTxHash   String   @unique
+  stellarLedger   Int?
+
+  // Paper being reviewed
+  paperId         String
+  paper           Paper    @relation(fields: [paperId], references: [id])
+
+  // Reviewer
+  reviewerId      String
+  reviewer        User     @relation(fields: [reviewerId], references: [id])
+
+  // Review data
+  recommendation  ReviewRecommendation
+  confidence      Int      // 1-5 scale
+
+  // Status
+  status          ReviewStatus @default(SUBMITTED)
+
+  // Reputation impact
+  reputationAwarded Int    @default(0)
+
+  @@index([paperId])
+  @@index([reviewerId])
+  @@index([status])
+  @@map("reviews")
+}
+
+enum ReviewRecommendation {
+  ACCEPT
+  MINOR_REVISION
+  MAJOR_REVISION
+  REJECT
+}
+
+enum ReviewStatus {
+  SUBMITTED
+  VALIDATED
+  PUBLISHED
+}
+
+// ============================================================================
+// VERIFICATIONS (Linking to blockchain)
+// ============================================================================
+
+model Verification {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Blockchain References
+  ipfsHash        String   @unique
+  stellarTxHash   String   @unique
+  stellarLedger   Int?
+
+  // Paper being verified
+  paperId         String
+  paper           Paper    @relation(fields: [paperId], references: [id])
+
+  // Verifier
+  verifierId      String
+  verifier        User     @relation(fields: [verifierId], references: [id])
+
+  // Verification result
+  reproducible    Boolean
+
+  // Status
+  status          VerificationStatus @default(SUBMITTED)
+
+  // Reputation impact
+  reputationAwarded Int    @default(0)
+
+  @@index([paperId])
+  @@index([verifierId])
+  @@index([status])
+  @@map("verifications")
+}
+
+enum VerificationStatus {
+  SUBMITTED
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+// ============================================================================
+// REPUTATION SYSTEM (For governance)
+// ============================================================================
+
+model ReputationEvent {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  eventType   ReputationEventType
+  points      Int      // Can be positive or negative
+  reason      String
+
+  // Related entities
+  relatedPaperId        String?
+  relatedReviewId       String?
+  relatedVerificationId String?
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("reputation_events")
+}
+
+enum ReputationEventType {
+  PAPER_SUBMITTED
+  PAPER_REVIEWED
+  PAPER_VERIFIED
+  REVIEW_VALIDATED
+  VERIFICATION_SUCCESSFUL
+  GOVERNANCE_PARTICIPATION
+  COMMUNITY_CONTRIBUTION
+  PENALTY_SPAM
+  PENALTY_MISCONDUCT
+}
