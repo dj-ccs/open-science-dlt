@@ -7,6 +7,7 @@
 import { Keypair } from 'stellar-sdk';
 import { prisma } from '../setup';
 import { PasswordService } from '../../src/auth/password.service';
+import { JWTService } from '../../src/auth/jwt.service';
 
 /**
  * Generate a test Stellar keypair
@@ -59,6 +60,43 @@ export async function createTestUser(overrides?: {
 }
 
 /**
+ * Create authenticated test user with JWT token
+ *
+ * This is the recommended way to create test users for API integration tests
+ * as it provides both the user record and a valid access token.
+ */
+export async function createAuthenticatedTestUser(overrides?: {
+  stellarPublicKey?: string;
+  email?: string;
+  password?: string;
+  displayName?: string;
+  affiliation?: string;
+  reputationScore?: number;
+}) {
+  // Create the user
+  const { user, stellarKeys } = await createTestUser(overrides);
+
+  // Generate JWT access token
+  const { token: accessToken, jti } = JWTService.generateAccessToken({
+    sub: user.id,
+    stellarKey: user.stellarPublicKey,
+    email: user.email || undefined,
+    orcidId: user.orcidId || undefined,
+    reputation: user.reputationScore,
+  });
+
+  // Create session for the token
+  const session = await createTestSession(user.id, jti);
+
+  return {
+    user,
+    accessToken,
+    stellarKeys,
+    session,
+  };
+}
+
+/**
  * Create a test session
  */
 export async function createTestSession(userId: string, jti: string) {
@@ -66,7 +104,9 @@ export async function createTestSession(userId: string, jti: string) {
 
   return await prisma.session.create({
     data: {
-      userId,
+      user: {
+        connect: { id: userId },
+      },
       jti,
       expiresAt,
       refreshToken: `refresh_${jti}`,
