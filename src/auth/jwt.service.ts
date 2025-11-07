@@ -19,14 +19,15 @@ export class JWTService {
   /**
    * Generate access token
    */
-  static generateAccessToken(payload: Omit<JWTPayload, 'iat' | 'exp' | 'jti'>): {
+  static generateAccessToken(payload: Omit<JWTPayload, 'iat' | 'exp'>): {
     token: string;
     jti: string;
     expiresAt: Date;
   } {
-    const jti = crypto.randomUUID();
+    const jti = payload.jti || crypto.randomUUID();
+    const tokenPayload = { ...payload, jti };
 
-    const token = (jwt.sign as any)({ ...payload, jti }, this.jwtSecret, {
+    const token = (jwt.sign as any)(tokenPayload, this.jwtSecret, {
       expiresIn: this.jwtExpiration,
       issuer: 'open-science-dlt',
       audience: 'open-science-dlt-api',
