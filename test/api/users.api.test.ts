@@ -18,6 +18,7 @@ describe('User API', () => {
 
   beforeAll(async () => {
     server = await buildServer();
+    await server.ready();
   });
 
   afterAll(async () => {
