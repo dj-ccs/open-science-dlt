@@ -9,6 +9,13 @@ A decentralized platform for open science publishing using Stellar blockchain
 - Enable independent verification of research
 - Democratize access to scientific knowledge
 
+### An Implementation Lab of the Unified Conscious Evolution Framework (UCF)
+
+This project is the active **Implementation Laboratory for Pillar I (Science)** of the [Unified Conscious Evolution Framework (UCF)](https://github.com/dj-ccs/Unified-Conscious-Evolution-Framework).
+
+*   **Our Mission:** To create an immutable, transparent, and decentralized platform for scientific publishing, peer review, and verification.
+*   **Our North Star:** The [UCF Repository](https://github.com/dj-ccs/Unified-Conscious-Evolution-Framework) contains the full architectural vision for a regenerative civilization that this project helps to enable.
+
 ## Why This Matters
 
 The history of scientific publishing reveals a concerning pattern of knowledge control and manipulation. In the 1950s, Robert Maxwell's Pergamon Press revolutionized academic publishing by standardizing the peer review process. While this established important quality controls, it also created unprecedented opportunities for controlling scientific information:
