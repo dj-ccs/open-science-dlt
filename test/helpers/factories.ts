@@ -120,24 +120,6 @@ export async function createAuthenticatedTestUser(overrides?: {
 }
 
 /**
- * Create a test session
- */
-export async function createTestSession(userId: string, jti: string) {
-  const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-
-  return await prisma.session.create({
-    data: {
-      user: {
-        connect: { id: userId },
-      },
-      jti,
-      expiresAt,
-      refreshToken: `refresh_${jti}`,
-    },
-  });
-}
-
-/**
  * Create a test paper
  */
 export async function createTestPaper(

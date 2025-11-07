@@ -3,8 +3,13 @@
  */
 
 import { PasswordService } from '../../src/auth/password.service';
+import { cleanDatabase } from '../setup';
 
 describe('PasswordService', () => {
+  beforeEach(async () => {
+    await cleanDatabase();
+  });
+
   describe('hash', () => {
     it('should hash a password', async () => {
       const password = 'SecurePassword123!';

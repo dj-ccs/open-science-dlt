@@ -5,8 +5,13 @@
 import { StellarAuth } from '../../src/auth/stellar.auth';
 import { UnauthorizedError } from '../../src/types/errors.types';
 import { generateStellarKeypair, signChallenge } from '../helpers/factories';
+import { cleanDatabase } from '../setup';
 
 describe('StellarAuth', () => {
+  beforeEach(async () => {
+    await cleanDatabase();
+  });
+
   describe('verifySignature', () => {
     it('should verify a valid signature', () => {
       const { publicKey, keypair } = generateStellarKeypair();

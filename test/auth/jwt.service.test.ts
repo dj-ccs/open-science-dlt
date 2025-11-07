@@ -4,8 +4,13 @@
 
 import { JWTService } from '../../src/auth/jwt.service';
 import { UnauthorizedError } from '../../src/types/errors.types';
+import { cleanDatabase } from '../setup';
 
 describe('JWTService', () => {
+  beforeEach(async () => {
+    await cleanDatabase();
+  });
+
   const mockPayload = {
     sub: 'user123',
     stellarKey: 'GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
