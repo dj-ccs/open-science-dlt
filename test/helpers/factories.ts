@@ -5,8 +5,10 @@
  */
 
 import { Keypair } from 'stellar-sdk';
+import { randomUUID } from 'crypto';
 import { prisma } from '../setup';
 import { PasswordService } from '../../src/auth/password.service';
+import { JWTService } from '../../src/auth/jwt.service';
 
 /**
  * Generate a test Stellar keypair
@@ -59,19 +61,62 @@ export async function createTestUser(overrides?: {
 }
 
 /**
- * Create a test session
+ * Create authenticated test user with JWT token
+ *
+ * This is the recommended way to create test users for API integration tests
+ * as it provides both the user record and a valid access token.
  */
-export async function createTestSession(userId: string, jti: string) {
-  const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+export async function createAuthenticatedTestUser(overrides?: {
+  stellarPublicKey?: string;
+  email?: string;
+  password?: string;
+  displayName?: string;
+  affiliation?: string;
+  reputationScore?: number;
+}) {
+  const stellarKeys = generateStellarKeypair();
+  const jti = randomUUID();
 
-  return await prisma.session.create({
-    data: {
-      userId,
-      jti,
-      expiresAt,
-      refreshToken: `refresh_${jti}`,
+  const userData: any = {
+    stellarPublicKey: overrides?.stellarPublicKey || stellarKeys.publicKey,
+    displayName: overrides?.displayName || 'Test User',
+    affiliation: overrides?.affiliation || 'Test University',
+    reputationScore: overrides?.reputationScore || 0,
+    sessions: {
+      create: {
+        jti,
+        refreshToken: `mock-refresh-token-${jti}`,
+        expiresAt: new Date(Date.now() + 3600 * 1000),
+      },
     },
+  };
+
+  if (overrides?.email) {
+    userData.email = overrides.email;
+  }
+
+  if (overrides?.password) {
+    userData.passwordHash = await PasswordService.hash(overrides.password);
+  }
+
+  const user = await prisma.user.create({
+    data: userData,
   });
+
+  const { token: accessToken } = JWTService.generateAccessToken({
+    sub: user.id,
+    jti,
+    stellarKey: user.stellarPublicKey,
+    email: user.email || undefined,
+    orcidId: user.orcidId || undefined,
+    reputation: user.reputationScore,
+  });
+
+  return {
+    user,
+    accessToken,
+    stellarKeys: overrides?.stellarPublicKey ? null : stellarKeys,
+  };
 }
 
 /**

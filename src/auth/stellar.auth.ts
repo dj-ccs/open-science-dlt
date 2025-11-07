@@ -39,6 +39,7 @@ export class StellarAuth {
 
       if (!isValid) {
         logger.warn('Invalid Stellar signature', { publicKey });
+        throw new UnauthorizedError('Invalid Stellar signature');
       }
 
       return isValid;

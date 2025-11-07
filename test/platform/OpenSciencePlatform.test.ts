@@ -1,4 +1,5 @@
 import { OpenSciencePlatform } from '../../src/platform/OpenSciencePlatform';
+import { cleanDatabase } from '../setup';
 
 // Mock IPFS and Stellar clients
 jest.mock('ipfs-http-client');
@@ -15,7 +16,9 @@ describe('OpenSciencePlatform', () => {
     content: 'Test content',
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await cleanDatabase();
+
     platform = new OpenSciencePlatform({
       network: 'testnet',
       ipfsNode: 'https://ipfs.infura.io:5001',

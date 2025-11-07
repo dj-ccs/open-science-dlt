@@ -1,9 +1,12 @@
 import { ResearchPaper, PaperStatus } from '../../src/contracts/ResearchPaper';
+import { cleanDatabase } from '../setup';
 
 describe('ResearchPaper', () => {
   let paper: ResearchPaper;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await cleanDatabase();
+
     paper = new ResearchPaper({
       hash: 'QmTest...',
       title: 'Test Paper',

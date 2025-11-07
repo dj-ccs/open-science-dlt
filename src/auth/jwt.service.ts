@@ -19,14 +19,15 @@ export class JWTService {
   /**
    * Generate access token
    */
-  static generateAccessToken(payload: Omit<JWTPayload, 'iat' | 'exp' | 'jti'>): {
+  static generateAccessToken(payload: Omit<JWTPayload, 'iat' | 'exp' | 'jti'> & { jti?: string }): {
     token: string;
     jti: string;
     expiresAt: Date;
   } {
-    const jti = crypto.randomUUID();
+    const jti = payload.jti || crypto.randomUUID();
+    const tokenPayload = { ...payload, jti };
 
-    const token = (jwt.sign as any)({ ...payload, jti }, this.jwtSecret, {
+    const token = (jwt.sign as any)(tokenPayload, this.jwtSecret, {
       expiresIn: this.jwtExpiration,
       issuer: 'open-science-dlt',
       audience: 'open-science-dlt-api',
@@ -45,12 +46,17 @@ export class JWTService {
    * Generate refresh token
    */
   static generateRefreshToken(userId: string): string {
-    const token = (jwt.sign as any)({ sub: userId, type: 'refresh' }, this.refreshTokenSecret, {
-      expiresIn: this.refreshTokenExpiration,
-      issuer: 'open-science-dlt',
-    }) as string;
+    const jti = crypto.randomUUID();
+    const token = (jwt.sign as any)(
+      { sub: userId, jti, type: 'refresh' },
+      this.refreshTokenSecret,
+      {
+        expiresIn: this.refreshTokenExpiration,
+        issuer: 'open-science-dlt',
+      }
+    ) as string;
 
-    logger.debug('Refresh token generated', { userId });
+    logger.debug('Refresh token generated', { userId, jti });
 
     return token;
   }

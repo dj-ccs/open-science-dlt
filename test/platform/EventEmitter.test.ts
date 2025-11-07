@@ -1,9 +1,12 @@
 import { EventEmitter } from '../../src/platform/EventEmitter';
+import { cleanDatabase } from '../setup';
 
 describe('EventEmitter', () => {
   let emitter: EventEmitter;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await cleanDatabase();
+
     emitter = new EventEmitter();
   });
 

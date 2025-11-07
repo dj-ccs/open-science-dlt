@@ -7,14 +7,18 @@ import { userService } from '../../src/services/user.service';
 import { UnauthorizedError, ConflictError, ValidationError } from '../../src/types/errors.types';
 import {
   createTestUser,
+  createAuthenticatedTestUser,
   generateStellarKeypair,
   signChallenge,
-  createTestSession,
 } from '../helpers/factories';
 import { StellarAuth } from '../../src/auth/stellar.auth';
-import { prisma } from '../setup';
+import { prisma, cleanDatabase } from '../setup';
 
 describe('UserService', () => {
+  beforeEach(async () => {
+    await cleanDatabase();
+  });
+
   describe('authenticateWithStellar', () => {
     it('should authenticate existing user with valid signature', async () => {
       const { user, stellarKeys } = await createTestUser();
@@ -249,15 +253,19 @@ describe('UserService', () => {
     });
 
     it('should throw UnauthorizedError for revoked session', async () => {
-      const { user } = await createTestUser();
-      const session = await createTestSession(user.id, 'jti123');
+      const { user } = await createAuthenticatedTestUser();
+
+      // Find the session that was created
+      const session = await prisma.session.findFirst({
+        where: { userId: user.id },
+      });
 
       await prisma.session.update({
-        where: { id: session.id },
+        where: { id: session!.id },
         data: { isRevoked: true },
       });
 
-      await expect(userService.refreshAccessToken(session.refreshToken!)).rejects.toThrow(
+      await expect(userService.refreshAccessToken(session!.refreshToken!)).rejects.toThrow(
         UnauthorizedError
       );
     });
@@ -265,13 +273,17 @@ describe('UserService', () => {
 
   describe('logout', () => {
     it('should revoke session', async () => {
-      const { user } = await createTestUser();
-      const session = await createTestSession(user.id, 'jti123');
+      const { user } = await createAuthenticatedTestUser();
 
-      await userService.logout(session.jti);
+      // Find the session that was created
+      const session = await prisma.session.findFirst({
+        where: { userId: user.id },
+      });
+
+      await userService.logout(session!.jti);
 
       const revokedSession = await prisma.session.findUnique({
-        where: { jti: session.jti },
+        where: { jti: session!.jti },
       });
 
       expect(revokedSession!.isRevoked).toBe(true);
