@@ -5,6 +5,7 @@
  */
 
 import { Keypair } from 'stellar-sdk';
+import { randomUUID } from 'crypto';
 import { prisma } from '../setup';
 import { PasswordService } from '../../src/auth/password.service';
 import { JWTService } from '../../src/auth/jwt.service';
@@ -73,26 +74,48 @@ export async function createAuthenticatedTestUser(overrides?: {
   affiliation?: string;
   reputationScore?: number;
 }) {
-  // Create the user
-  const { user, stellarKeys } = await createTestUser(overrides);
+  const stellarKeys = generateStellarKeypair();
+  const jti = randomUUID();
 
-  // Generate JWT access token
-  const { token: accessToken, jti } = JWTService.generateAccessToken({
+  const userData: any = {
+    stellarPublicKey: overrides?.stellarPublicKey || stellarKeys.publicKey,
+    displayName: overrides?.displayName || 'Test User',
+    affiliation: overrides?.affiliation || 'Test University',
+    reputationScore: overrides?.reputationScore || 0,
+    sessions: {
+      create: {
+        jti,
+        refreshToken: `mock-refresh-token-${jti}`,
+        expiresAt: new Date(Date.now() + 3600 * 1000),
+      },
+    },
+  };
+
+  if (overrides?.email) {
+    userData.email = overrides.email;
+  }
+
+  if (overrides?.password) {
+    userData.passwordHash = await PasswordService.hash(overrides.password);
+  }
+
+  const user = await prisma.user.create({
+    data: userData,
+  });
+
+  const { token: accessToken } = JWTService.generateAccessToken({
     sub: user.id,
+    jti,
     stellarKey: user.stellarPublicKey,
     email: user.email || undefined,
     orcidId: user.orcidId || undefined,
     reputation: user.reputationScore,
   });
 
-  // Create session for the token
-  const session = await createTestSession(user.id, jti);
-
   return {
     user,
     accessToken,
-    stellarKeys,
-    session,
+    stellarKeys: overrides?.stellarPublicKey ? null : stellarKeys,
   };
 }
 

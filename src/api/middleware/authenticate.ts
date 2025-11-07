@@ -33,10 +33,13 @@ export async function authenticate(request: FastifyRequest, _reply: FastifyReply
     // Attach user payload to request
     request.user = payload;
 
-    logger.debug({
-      userId: payload.sub,
-      jti: payload.jti,
-    }, 'User authenticated');
+    logger.debug(
+      {
+        userId: payload.sub,
+        jti: payload.jti,
+      },
+      'User authenticated'
+    );
   } catch (error) {
     if (error instanceof UnauthorizedError) {
       throw error;

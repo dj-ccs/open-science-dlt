@@ -15,23 +15,26 @@ export async function errorHandler(
   reply: FastifyReply
 ) {
   // Log error with context
-  logger.error({
-    error: {
-      name: error.name,
-      message: error.message,
-      stack: error.stack,
-    },
-    request: {
-      method: request.method,
-      url: request.url,
-      params: request.params,
-      query: request.query,
-      headers: {
-        'user-agent': request.headers['user-agent'],
-        'content-type': request.headers['content-type'],
+  logger.error(
+    {
+      error: {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      },
+      request: {
+        method: request.method,
+        url: request.url,
+        params: request.params,
+        query: request.query,
+        headers: {
+          'user-agent': request.headers['user-agent'],
+          'content-type': request.headers['content-type'],
+        },
       },
     },
-  }, 'Request error');
+    'Request error'
+  );
 
   // Handle custom AppError
   if (error instanceof AppError) {
