@@ -19,7 +19,7 @@ export class JWTService {
   /**
    * Generate access token
    */
-  static generateAccessToken(payload: Omit<JWTPayload, 'iat' | 'exp'>): {
+  static generateAccessToken(payload: Omit<JWTPayload, 'iat' | 'exp' | 'jti'> & { jti?: string }): {
     token: string;
     jti: string;
     expiresAt: Date;
