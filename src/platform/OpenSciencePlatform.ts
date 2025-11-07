@@ -1,5 +1,5 @@
 import { Server, Networks, Transaction } from 'stellar-sdk';
-import { create as createIPFS, IPFSHTTPClient } from 'ipfs-http-client';
+import { create, IPFSHTTPClient } from 'ipfs-http-client';
 import { EventEmitter } from './EventEmitter';
 
 interface PaperMetadata {
@@ -46,7 +46,7 @@ export class OpenSciencePlatform extends EventEmitter {
     this.networkPassphrase = config.network === 'testnet' ? Networks.TESTNET : Networks.PUBLIC;
 
     // Initialize IPFS client
-    this.ipfs = createIPFS({ url: config.ipfsNode });
+    this.ipfs = create({ url: config.ipfsNode });
   }
 
   async submitPaper(
