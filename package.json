@@ -101,6 +101,7 @@
     "preset": "ts-jest",
     "testEnvironment": "node",
     "clearMocks": true,
+    "resetMocks": true,
     "modulePathIgnorePatterns": ["<rootDir>/dist/"],
     "setupFilesAfterEnv": [
       "<rootDir>/test/setup.ts"

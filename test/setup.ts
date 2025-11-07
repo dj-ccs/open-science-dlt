@@ -4,8 +4,6 @@
  * Configures the test environment and provides cleanup utilities
  */
 
-jest.mock('../src/utils/logger');
-
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
