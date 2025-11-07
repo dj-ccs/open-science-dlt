@@ -37,7 +37,7 @@ export class JWTService {
     const decoded = jwt.decode(token) as JWTPayload;
     const expiresAt = new Date(decoded.exp * 1000);
 
-    logger.debug({ userId: payload.sub, jti }, 'Access token generated');
+    logger.debug('Access token generated', { userId: payload.sub, jti });
 
     return { token, jti, expiresAt };
   }
@@ -56,7 +56,7 @@ export class JWTService {
       }
     ) as string;
 
-    logger.debug({ userId, jti }, 'Refresh token generated');
+    logger.debug('Refresh token generated', { userId, jti });
 
     return token;
   }

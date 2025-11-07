@@ -23,7 +23,7 @@ export class UserController {
   ): Promise<void> {
     const { id } = request.params;
 
-    logger.info({ userId: id }, 'Fetching user profile');
+    logger.info('Fetching user profile', { userId: id });
 
     const user = await userService.getUserById(id);
 
@@ -63,7 +63,7 @@ export class UserController {
     const updates = request.body;
     const currentUser = (request as any).user as JWTPayload;
 
-    logger.info({ userId: id, requesterId: currentUser.sub }, 'Updating user profile');
+    logger.info('Updating user profile', { userId: id, requesterId: currentUser.sub });
 
     // Authorization: Users can only update their own profile
     if (currentUser.sub !== id) {
@@ -72,7 +72,7 @@ export class UserController {
 
     const updatedUser = await userService.updateProfile(id, updates);
 
-    logger.info({ userId: id }, 'User profile updated successfully');
+    logger.info('User profile updated successfully', { userId: id });
 
     reply.code(200).send({
       id: updatedUser.id,
@@ -105,7 +105,7 @@ export class UserController {
   ): Promise<void> {
     const { id } = request.params;
 
-    logger.info({ userId: id }, 'Fetching reputation history');
+    logger.info('Fetching reputation history', { userId: id });
 
     // First verify user exists
     const user = await userService.getUserById(id);

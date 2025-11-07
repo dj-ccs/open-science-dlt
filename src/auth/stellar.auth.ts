@@ -38,13 +38,13 @@ export class StellarAuth {
       const isValid = keypair.verify(challengeBuffer, signatureBuffer);
 
       if (!isValid) {
-        logger.warn({ publicKey }, 'Invalid Stellar signature');
+        logger.warn('Invalid Stellar signature', { publicKey });
         throw new UnauthorizedError('Invalid Stellar signature');
       }
 
       return isValid;
     } catch (error) {
-      logger.error({ error, publicKey }, 'Error verifying Stellar signature');
+      logger.error('Error verifying Stellar signature', { error, publicKey });
       throw new UnauthorizedError('Invalid Stellar signature');
     }
   }
@@ -73,14 +73,14 @@ export class StellarAuth {
 
       // Validate format
       if (parts.length !== 3 || parts[0] !== 'open-science-dlt-auth') {
-        logger.warn({ challenge }, 'Invalid challenge format');
+        logger.warn('Invalid challenge format', { challenge });
         return false;
       }
 
       // Parse timestamp
       const timestamp = parseInt(parts[1]);
       if (isNaN(timestamp)) {
-        logger.warn({ challenge }, 'Invalid challenge timestamp');
+        logger.warn('Invalid challenge timestamp', { challenge });
         return false;
       }
 
@@ -89,13 +89,13 @@ export class StellarAuth {
       const windowMs = this.parseTimeWindow(this.challengeWindow);
 
       if (now - timestamp > windowMs) {
-        logger.warn({ challenge, age: now - timestamp }, 'Challenge expired');
+        logger.warn('Challenge expired', { challenge, age: now - timestamp });
         return false;
       }
 
       return true;
     } catch (error) {
-      logger.error({ error, challenge }, 'Error validating challenge');
+      logger.error('Error validating challenge', { error, challenge });
       return false;
     }
   }

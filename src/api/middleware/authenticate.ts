@@ -33,19 +33,16 @@ export async function authenticate(request: FastifyRequest, _reply: FastifyReply
     // Attach user payload to request
     request.user = payload;
 
-    logger.debug(
-      {
-        userId: payload.sub,
-        jti: payload.jti,
-      },
-      'User authenticated'
-    );
+    logger.debug('User authenticated', {
+      userId: payload.sub,
+      jti: payload.jti,
+    });
   } catch (error) {
     if (error instanceof UnauthorizedError) {
       throw error;
     }
 
-    logger.error({ error }, 'Authentication error');
+    logger.error('Authentication error', { error });
     throw new UnauthorizedError('Authentication failed');
   }
 }
@@ -74,6 +71,6 @@ export async function optionalAuthenticate(
     }
   } catch (error) {
     // Silently fail for optional auth
-    logger.debug({ error }, 'Optional authentication failed');
+    logger.debug('Optional authentication failed', { error });
   }
 }

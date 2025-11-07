@@ -64,7 +64,7 @@ export class AuthController {
   ): Promise<void> {
     const { email, password } = request.body;
 
-    logger.info({ email }, 'Email authentication attempt');
+    logger.info('Email authentication attempt', { email });
 
     const authResponse = await userService.authenticateWithEmail(email, password);
 
