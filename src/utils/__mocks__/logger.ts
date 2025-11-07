@@ -1,5 +1,7 @@
 // src/utils/__mocks__/logger.ts
-export const logger = {
+import { jest } from '@jest/globals';
+
+export const logger: any = {
   info: jest.fn(),
   warn: jest.fn(),
   error: jest.fn(),
