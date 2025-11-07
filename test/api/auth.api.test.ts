@@ -7,6 +7,7 @@ import { buildServer } from '../../src/api/server';
 import { FastifyInstance } from 'fastify';
 import { createTestUser, generateStellarKeypair, signChallenge } from '../helpers/factories';
 import { StellarAuth } from '../../src/auth/stellar.auth';
+import { cleanDatabase } from '../setup';
 
 describe('Authentication API', () => {
   let server: FastifyInstance;
@@ -17,6 +18,10 @@ describe('Authentication API', () => {
 
   afterAll(async () => {
     await server.close();
+  });
+
+  beforeEach(async () => {
+    await cleanDatabase();
   });
 
   describe('GET /api/v1/auth/challenge', () => {

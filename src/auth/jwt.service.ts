@@ -45,12 +45,13 @@ export class JWTService {
    * Generate refresh token
    */
   static generateRefreshToken(userId: string): string {
-    const token = (jwt.sign as any)({ sub: userId, type: 'refresh' }, this.refreshTokenSecret, {
+    const jti = crypto.randomUUID();
+    const token = (jwt.sign as any)({ sub: userId, jti, type: 'refresh' }, this.refreshTokenSecret, {
       expiresIn: this.refreshTokenExpiration,
       issuer: 'open-science-dlt',
     }) as string;
 
-    logger.debug({ userId }, 'Refresh token generated');
+    logger.debug({ userId, jti }, 'Refresh token generated');
 
     return token;
   }

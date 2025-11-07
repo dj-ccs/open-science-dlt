@@ -12,9 +12,13 @@ import {
   createTestSession,
 } from '../helpers/factories';
 import { StellarAuth } from '../../src/auth/stellar.auth';
-import { prisma } from '../setup';
+import { prisma, cleanDatabase } from '../setup';
 
 describe('UserService', () => {
+  beforeEach(async () => {
+    await cleanDatabase();
+  });
+
   describe('authenticateWithStellar', () => {
     it('should authenticate existing user with valid signature', async () => {
       const { user, stellarKeys } = await createTestUser();

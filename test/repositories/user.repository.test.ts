@@ -6,8 +6,13 @@ import '../setup';
 import { userRepository } from '../../src/database/repositories/user.repository';
 import { ConflictError, NotFoundError } from '../../src/types/errors.types';
 import { createTestUser, generateStellarKeypair } from '../helpers/factories';
+import { cleanDatabase } from '../setup';
 
 describe('UserRepository', () => {
+  beforeEach(async () => {
+    await cleanDatabase();
+  });
+
   describe('create', () => {
     it('should create a new user', async () => {
       const { publicKey } = generateStellarKeypair();
