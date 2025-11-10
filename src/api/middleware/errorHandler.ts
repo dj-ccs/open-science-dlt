@@ -67,21 +67,23 @@ export async function errorHandler(
   }
 
   // Handle schema validation errors (from schemaErrorFormatter)
-  // These have a validation property attached
-  if ((error as any).validation || (error as any).error === 'VALIDATION_ERROR') {
+  // Check for explicit validation error marker FIRST to prevent fallthrough
+  const errorObj = error as any;
+  if (errorObj.error === 'VALIDATION_ERROR' || errorObj.validation) {
     return reply.code(400).send({
       statusCode: 400,
       error: 'VALIDATION_ERROR',
       message: error.message,
-      validation: (error as any).validation,
+      validation: errorObj.validation,
     });
   }
 
   // Handle Fastify errors by status code
   if ((error as FastifyError).statusCode) {
-    const statusCode = (error as FastifyError).statusCode || 500;
+    const fastifyError = error as FastifyError;
+    const statusCode = fastifyError.statusCode || 500;
 
-    // Map status codes to uppercase error codes
+    // Map status codes to uppercase SNAKE_CASE error codes
     let errorCode: string;
     let errorMessage: string;
 
@@ -115,9 +117,10 @@ export async function errorHandler(
         errorMessage = error.message || 'An error occurred';
     }
 
+    // Explicitly force uppercase error code in response
     return reply.code(statusCode).send({
       statusCode,
-      error: errorCode,
+      error: errorCode, // Always use the uppercase SNAKE_CASE errorCode
       message: errorMessage,
     });
   }
