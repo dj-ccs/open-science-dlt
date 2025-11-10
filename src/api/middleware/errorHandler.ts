@@ -35,18 +35,17 @@ export async function errorHandler(
 
   // Handle custom AppError instances
   if (error instanceof AppError) {
-    // Derive error code from name if not explicitly set
-    // Converts PascalCase to SNAKE_CASE (e.g., "NotFoundError" -> "NOT_FOUND")
-    const errorCode =
-      error.code ||
+    // Convert error name to uppercase SNAKE_CASE
+    // e.g., "NotFoundError" -> "NOT_FOUND_ERROR" -> "NOT_FOUND"
+    const appErrorCode = error.code ||
       error.name
-        .replace(/Error$/, '') // Remove Error suffix
         .replace(/([a-z])([A-Z])/g, '$1_$2') // Add underscore between camelCase parts
-        .toUpperCase();
+        .toUpperCase()
+        .replace(/_ERROR$/, ''); // Remove _ERROR suffix
 
     return reply.code(error.statusCode).send({
       statusCode: error.statusCode,
-      error: errorCode,
+      error: appErrorCode,
       message: error.message,
       ...(error.details && { details: error.details }),
     });

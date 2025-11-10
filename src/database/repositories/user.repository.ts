@@ -71,9 +71,9 @@ export class UserRepository {
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          // Defensively extract target to avoid TS18048 error
-          const target = (error.meta && (error.meta as any).target) ?? [];
-          const field = Array.isArray(target) ? target[0] : target || 'field';
+          // P2002: Unique constraint violation
+          const target = error.meta?.target;
+          const field = Array.isArray(target) ? target[0] : (target as string) || 'field';
           throw new ConflictError(`User with this ${field} already exists`);
         }
       }
@@ -94,9 +94,9 @@ export class UserRepository {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         // Check for unique constraint violation first
         if (error.code === 'P2002') {
-          // Defensively extract target to avoid TS18048 error
-          const target = (error.meta && (error.meta as any).target) ?? [];
-          const field = Array.isArray(target) ? target[0] : target || 'field';
+          // P2002: Unique constraint violation
+          const target = error.meta?.target;
+          const field = Array.isArray(target) ? target[0] : (target as string) || 'field';
           throw new ConflictError(`User with this ${field} already exists`);
         }
         // Then check for not found
