@@ -122,6 +122,11 @@ export class UserRepository {
         },
       });
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new NotFoundError('User');
+        }
+      }
       throw new DatabaseError('Error updating reputation', error);
     }
   }
@@ -195,6 +200,11 @@ export class UserRepository {
         },
       });
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new NotFoundError('User');
+        }
+      }
       throw new DatabaseError('Error banning user', error);
     }
   }
@@ -213,6 +223,11 @@ export class UserRepository {
         },
       });
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new NotFoundError('User');
+        }
+      }
       throw new DatabaseError('Error unbanning user', error);
     }
   }
@@ -229,6 +244,11 @@ export class UserRepository {
         },
       });
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new NotFoundError('User');
+        }
+      }
       throw new DatabaseError('Error deleting user', error);
     }
   }
