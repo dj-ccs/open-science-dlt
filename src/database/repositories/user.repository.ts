@@ -90,12 +90,14 @@ export class UserRepository {
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2025') {
-          throw new NotFoundError('User');
-        }
+        // Check for unique constraint violation first
         if (error.code === 'P2002') {
           const field = (error.meta?.target as string[])?.[0] || 'field';
           throw new ConflictError(`User with this ${field} already exists`);
+        }
+        // Then check for not found
+        if (error.code === 'P2025') {
+          throw new NotFoundError('User');
         }
       }
       throw new DatabaseError('Error updating user', error);
