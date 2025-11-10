@@ -17,9 +17,18 @@ import { prisma, disconnectDatabase } from '../database/client';
 export async function buildServer(): Promise<FastifyInstance> {
   const server = Fastify({
     logger: {
-      ...logger,
-      fatal: logger.error,
-      trace: logger.debug,
+      level: logger.level,
+      serializers: {
+        req(request: any) {
+          return {
+            method: request.method,
+            url: request.url,
+            headers: request.headers,
+            hostname: request.hostname,
+            remoteAddress: request.ip,
+          };
+        },
+      },
     },
     requestIdHeader: 'x-request-id',
     requestIdLogLabel: 'requestId',
@@ -30,6 +39,22 @@ export async function buildServer(): Promise<FastifyInstance> {
         coerceTypes: true,
         useDefaults: true,
       },
+    },
+    // Custom schema error formatter
+    schemaErrorFormatter: (errors, _dataVar) => {
+      const message = errors?.[0]?.message ?? 'Validation failed';
+      const error = new Error(message) as Error & {
+        statusCode: number;
+        error: string;
+        validation: { path: string; message: string }[];
+      };
+      error.statusCode = 400;
+      error.error = 'VALIDATION_ERROR';
+      error.validation = errors.map(e => ({
+        path: (e as any).instancePath || (e as any).schemaPath,
+        message: (e as any).message,
+      }));
+      return error;
     },
   });
 

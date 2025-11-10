@@ -35,11 +35,19 @@ export async function errorHandler(
 
   // Handle custom AppError
   if (error instanceof AppError) {
+    // Derive error code from name if not explicitly set
+    // Converts PascalCase to SNAKE_CASE (e.g., "NotFoundError" -> "NOT_FOUND")
+    const errorCode =
+      error.code ||
+      error.name
+        .replace(/Error$/, '') // Remove Error suffix
+        .replace(/([a-z])([A-Z])/g, '$1_$2') // Add underscore between camelCase parts
+        .toUpperCase();
+
     return reply.code(error.statusCode).send({
       statusCode: error.statusCode,
-      error: error.name,
+      error: errorCode,
       message: error.message,
-      code: error.code,
       ...(error.details && { details: error.details }),
     });
   }
@@ -48,7 +56,7 @@ export async function errorHandler(
   if (error instanceof ZodError) {
     return reply.code(400).send({
       statusCode: 400,
-      error: 'Validation Error',
+      error: 'VALIDATION_ERROR',
       message: 'Request validation failed',
       details: error.errors.map(err => ({
         path: err.path.join('.'),
@@ -62,7 +70,7 @@ export async function errorHandler(
   if ((error as FastifyError).validation) {
     return reply.code(400).send({
       statusCode: 400,
-      error: 'Validation Error',
+      error: 'VALIDATION_ERROR',
       message: error.message,
       validation: (error as FastifyError).validation,
     });
@@ -71,12 +79,34 @@ export async function errorHandler(
   // Handle Fastify errors
   if ((error as FastifyError).statusCode) {
     const statusCode = (error as FastifyError).statusCode || 500;
-    const message = statusCode === 500 ? 'Internal Server Error' : error.message;
+
+    // Map Fastify status codes to custom error codes and messages
+    let errorCode = error.name || 'Error';
+    let errorMessage = error.message;
+
+    if (statusCode === 404) {
+      errorCode = 'NOT_FOUND';
+      errorMessage = 'Not Found';
+    } else if (statusCode === 400) {
+      errorCode = 'VALIDATION_ERROR';
+      errorMessage = error.message; // Keep the original validation message
+    } else if (statusCode === 401) {
+      errorCode = 'UNAUTHORIZED';
+      errorMessage = 'Unauthorized';
+    } else if (statusCode === 403) {
+      errorCode = 'FORBIDDEN';
+      errorMessage = 'Forbidden';
+    } else if (statusCode === 409) {
+      errorCode = 'CONFLICT';
+      errorMessage = 'Conflict';
+    } else if (statusCode === 500) {
+      errorMessage = 'Internal Server Error';
+    }
 
     return reply.code(statusCode).send({
       statusCode,
-      error: error.name || 'Error',
-      message,
+      error: errorCode,
+      message: errorMessage,
     });
   }
 

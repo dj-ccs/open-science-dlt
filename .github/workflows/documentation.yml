@@ -8,6 +8,9 @@ on:
       - '**/*.md'
       - 'src/**/*.ts'
 
+permissions:
+  contents: write
+
 jobs:
   docs:
     runs-on: ubuntu-latest

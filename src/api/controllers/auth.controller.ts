@@ -9,6 +9,7 @@ import {
 } from '../schemas/auth.schema';
 import { JWTPayload } from '../../types/auth.types';
 import { logger } from '../../utils/logger';
+import { AppError, UnauthorizedError } from '../../types/errors.types';
 
 /**
  * Authentication Controller
@@ -46,9 +47,22 @@ export class AuthController {
       publicKey: StellarAuth.formatPublicKey(publicKey),
     });
 
-    const authResponse = await userService.authenticateWithStellar(publicKey, challenge, signature);
+    try {
+      const authResponse = await userService.authenticateWithStellar(
+        publicKey,
+        challenge,
+        signature
+      );
 
-    reply.code(200).send(authResponse);
+      reply.code(200).send(authResponse);
+    } catch (error) {
+      // Re-throw UnauthorizedError as-is, convert everything else to UnauthorizedError
+      if (error instanceof AppError && error.name === 'UnauthorizedError') {
+        throw error;
+      }
+      // This handles DatabaseError, NotFoundError, etc. from service layer
+      throw new UnauthorizedError('Authentication failed');
+    }
   }
 
   /**
@@ -63,9 +77,18 @@ export class AuthController {
 
     logger.info('Email authentication attempt', { email });
 
-    const authResponse = await userService.authenticateWithEmail(email, password);
+    try {
+      const authResponse = await userService.authenticateWithEmail(email, password);
 
-    reply.code(200).send(authResponse);
+      reply.code(200).send(authResponse);
+    } catch (error) {
+      // Re-throw UnauthorizedError as-is, convert everything else to UnauthorizedError
+      if (error instanceof AppError && error.name === 'UnauthorizedError') {
+        throw error;
+      }
+      // This handles DatabaseError, NotFoundError, etc. from service layer
+      throw new UnauthorizedError('Authentication failed');
+    }
   }
 
   /**

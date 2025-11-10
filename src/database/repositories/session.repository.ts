@@ -17,6 +17,16 @@ export class SessionRepository {
         data,
       });
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // P2003: Foreign key constraint failed
+        if (error.code === 'P2003') {
+          throw new NotFoundError('User');
+        }
+        // P2025: Record not found
+        if (error.code === 'P2025') {
+          throw new NotFoundError('User');
+        }
+      }
       throw new DatabaseError('Error creating session', error);
     }
   }

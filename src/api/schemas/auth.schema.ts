@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { zodToJsonSchema } from 'zod-to-json-schema';
 
 // ============================================================================
 // STELLAR AUTHENTICATION
@@ -20,10 +21,10 @@ export const stellarAuthResponseSchema = z.object({
   user: z.object({
     id: z.string(),
     stellarPublicKey: z.string(),
-    email: z.string().nullable(),
-    displayName: z.string().nullable(),
+    email: z.string().nullish(),
+    displayName: z.string().nullish(),
     reputationScore: z.number(),
-    orcidId: z.string().nullable(),
+    orcidId: z.string().nullish(),
   }),
 });
 
@@ -65,8 +66,8 @@ export const registerResponseSchema = z.object({
   user: z.object({
     id: z.string(),
     stellarPublicKey: z.string(),
-    email: z.string().nullable(),
-    displayName: z.string().nullable(),
+    email: z.string().nullish(),
+    displayName: z.string().nullish(),
     reputationScore: z.number(),
   }),
 });
@@ -100,13 +101,13 @@ export const generateChallengeResponseSchema = z.object({
 export const currentUserResponseSchema = z.object({
   id: z.string(),
   stellarPublicKey: z.string(),
-  email: z.string().nullable(),
-  displayName: z.string().nullable(),
-  affiliation: z.string().nullable(),
-  bio: z.string().nullable(),
-  avatarUrl: z.string().nullable(),
+  email: z.string().nullish(),
+  displayName: z.string().nullish(),
+  affiliation: z.string().nullish(),
+  bio: z.string().nullish(),
+  avatarUrl: z.string().nullish(),
   reputationScore: z.number(),
-  orcidId: z.string().nullable(),
+  orcidId: z.string().nullish(),
   orcidVerified: z.boolean(),
   emailVerified: z.boolean(),
   isActive: z.boolean(),
@@ -121,3 +122,43 @@ export type RegisterRequest = z.infer<typeof registerRequestSchema>;
 export type RefreshTokenRequest = z.infer<typeof refreshTokenRequestSchema>;
 export type RefreshTokenResponse = z.infer<typeof refreshTokenResponseSchema>;
 export type CurrentUserResponse = z.infer<typeof currentUserResponseSchema>;
+
+// ============================================================================
+// JSON SCHEMA EXPORTS (for Fastify)
+// ============================================================================
+
+// Fastify requires JSON Schema format, so we convert Zod schemas
+export const stellarAuthRequestJsonSchema = zodToJsonSchema(
+  stellarAuthRequestSchema,
+  'stellarAuthRequest'
+);
+export const stellarAuthResponseJsonSchema = zodToJsonSchema(
+  stellarAuthResponseSchema,
+  'stellarAuthResponse'
+);
+export const emailAuthRequestJsonSchema = zodToJsonSchema(
+  emailAuthRequestSchema,
+  'emailAuthRequest'
+);
+export const emailAuthResponseJsonSchema = stellarAuthResponseJsonSchema;
+export const registerRequestJsonSchema = zodToJsonSchema(registerRequestSchema, 'registerRequest');
+export const registerResponseJsonSchema = zodToJsonSchema(
+  registerResponseSchema,
+  'registerResponse'
+);
+export const refreshTokenRequestJsonSchema = zodToJsonSchema(
+  refreshTokenRequestSchema,
+  'refreshTokenRequest'
+);
+export const refreshTokenResponseJsonSchema = zodToJsonSchema(
+  refreshTokenResponseSchema,
+  'refreshTokenResponse'
+);
+export const generateChallengeResponseJsonSchema = zodToJsonSchema(
+  generateChallengeResponseSchema,
+  'generateChallengeResponse'
+);
+export const currentUserResponseJsonSchema = zodToJsonSchema(
+  currentUserResponseSchema,
+  'currentUserResponse'
+);
