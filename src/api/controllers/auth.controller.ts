@@ -9,7 +9,7 @@ import {
 } from '../schemas/auth.schema';
 import { JWTPayload } from '../../types/auth.types';
 import { logger } from '../../utils/logger';
-import { NotFoundError, DatabaseError, UnauthorizedError } from '../../types/errors.types';
+import { AppError, UnauthorizedError } from '../../types/errors.types';
 
 /**
  * Authentication Controller
@@ -56,8 +56,8 @@ export class AuthController {
 
       reply.code(200).send(authResponse);
     } catch (error) {
-      // Convert database/not-found errors to unauthorized for authentication
-      if (error instanceof NotFoundError || error instanceof DatabaseError) {
+      // Convert all application errors (except UnauthorizedError) to 401 for authentication
+      if (error instanceof AppError && !(error instanceof UnauthorizedError)) {
         throw new UnauthorizedError('Authentication failed');
       }
       throw error;
@@ -81,8 +81,8 @@ export class AuthController {
 
       reply.code(200).send(authResponse);
     } catch (error) {
-      // Convert database/not-found errors to unauthorized for authentication
-      if (error instanceof NotFoundError || error instanceof DatabaseError) {
+      // Convert all application errors (except UnauthorizedError) to 401 for authentication
+      if (error instanceof AppError && !(error instanceof UnauthorizedError)) {
         throw new UnauthorizedError('Authentication failed');
       }
       throw error;
