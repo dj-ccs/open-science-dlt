@@ -167,7 +167,7 @@ describe('StellarAuth', () => {
 
   describe('formatPublicKey', () => {
     it('should format a public key for display', () => {
-      const publicKey = 'GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+      const publicKey = 'GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
       const formatted = StellarAuth.formatPublicKey(publicKey);
 
       expect(formatted).toBe('GXXX...XXXX');

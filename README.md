@@ -13,8 +13,8 @@ A decentralized platform for open science publishing using Stellar blockchain
 
 This project is the active **Implementation Laboratory for Pillar I (Science)** of the [Unified Conscious Evolution Framework (UCF)](https://github.com/dj-ccs/Unified-Conscious-Evolution-Framework).
 
-*   **Our Mission:** To create an immutable, transparent, and decentralized platform for scientific publishing, peer review, and verification.
-*   **Our North Star:** The [UCF Repository](https://github.com/dj-ccs/Unified-Conscious-Evolution-Framework) contains the full architectural vision for a regenerative civilization that this project helps to enable.
+- **Our Mission:** To create an immutable, transparent, and decentralized platform for scientific publishing, peer review, and verification.
+- **Our North Star:** The [UCF Repository](https://github.com/dj-ccs/Unified-Conscious-Evolution-Framework) contains the full architectural vision for a regenerative civilization that this project helps to enable.
 
 ## Why This Matters
 

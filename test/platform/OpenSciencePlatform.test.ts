@@ -2,8 +2,25 @@ import { OpenSciencePlatform } from '../../src/platform/OpenSciencePlatform';
 import { cleanDatabase } from '../setup';
 
 // Mock IPFS and Stellar clients
-jest.mock('ipfs-http-client');
-jest.mock('stellar-sdk');
+jest.mock('ipfs-http-client', () => ({
+  create: jest.fn(() => ({
+    add: jest.fn().mockResolvedValue({
+      path: 'QmTestHash123456789',
+      cid: { toString: () => 'QmTestHash123456789' },
+    }),
+  })),
+}));
+
+jest.mock('stellar-sdk', () => {
+  const actual = jest.requireActual('stellar-sdk');
+  return {
+    ...actual,
+    Server: jest.fn().mockImplementation(() => ({
+      loadAccount: jest.fn(),
+      submitTransaction: jest.fn(),
+    })),
+  };
+});
 
 describe('OpenSciencePlatform', () => {
   let platform: OpenSciencePlatform;

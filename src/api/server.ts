@@ -17,9 +17,18 @@ import { prisma, disconnectDatabase } from '../database/client';
 export async function buildServer(): Promise<FastifyInstance> {
   const server = Fastify({
     logger: {
-      ...logger,
-      fatal: logger.error,
-      trace: logger.debug,
+      level: logger.level,
+      serializers: {
+        req(request: any) {
+          return {
+            method: request.method,
+            url: request.url,
+            headers: request.headers,
+            hostname: request.hostname,
+            remoteAddress: request.ip,
+          };
+        },
+      },
     },
     requestIdHeader: 'x-request-id',
     requestIdLogLabel: 'requestId',
