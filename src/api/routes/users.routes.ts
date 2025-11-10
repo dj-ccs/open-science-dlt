@@ -2,10 +2,10 @@ import { FastifyInstance } from 'fastify';
 import { userController } from '../controllers/user.controller';
 import { authenticate } from '../middleware/authenticate';
 import {
-  userProfileResponseSchema,
-  updateUserProfileSchema,
-  reputationHistoryResponseSchema,
-  userIdParamSchema,
+  userProfileResponseJsonSchema,
+  updateUserProfileJsonSchema,
+  reputationHistoryResponseJsonSchema,
+  userIdParamJsonSchema,
 } from '../schemas/user.schema';
 
 /**
@@ -24,9 +24,9 @@ export async function userRoutes(server: FastifyInstance) {
       tags: ['Users'],
       summary: 'Get user profile',
       description: 'Fetch public user profile information including reputation score',
-      params: userIdParamSchema,
+      params: userIdParamJsonSchema,
       response: {
-        200: userProfileResponseSchema,
+        200: userProfileResponseJsonSchema,
       },
     },
     handler: userController.getUserProfile.bind(userController),
@@ -43,10 +43,10 @@ export async function userRoutes(server: FastifyInstance) {
       summary: 'Update user profile',
       description: 'Update authenticated user profile. Users can only update their own profile.',
       security: [{ bearerAuth: [] }],
-      params: userIdParamSchema,
-      body: updateUserProfileSchema,
+      params: userIdParamJsonSchema,
+      body: updateUserProfileJsonSchema,
       response: {
-        200: userProfileResponseSchema,
+        200: userProfileResponseJsonSchema,
       },
     },
     handler: userController.updateUserProfile.bind(userController),
@@ -65,9 +65,9 @@ export async function userRoutes(server: FastifyInstance) {
       summary: 'Get reputation history',
       description:
         'Fetch user reputation score and complete event history. Foundation for token rewards.',
-      params: userIdParamSchema,
+      params: userIdParamJsonSchema,
       response: {
-        200: reputationHistoryResponseSchema,
+        200: reputationHistoryResponseJsonSchema,
       },
     },
     handler: userController.getReputationHistory.bind(userController),

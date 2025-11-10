@@ -2,15 +2,16 @@ import { FastifyInstance } from 'fastify';
 import { authController } from '../controllers/auth.controller';
 import { authenticate } from '../middleware/authenticate';
 import {
-  stellarAuthRequestSchema,
-  stellarAuthResponseSchema,
-  emailAuthRequestSchema,
-  registerRequestSchema,
-  registerResponseSchema,
-  refreshTokenRequestSchema,
-  refreshTokenResponseSchema,
-  generateChallengeResponseSchema,
-  currentUserResponseSchema,
+  stellarAuthRequestJsonSchema,
+  stellarAuthResponseJsonSchema,
+  emailAuthRequestJsonSchema,
+  emailAuthResponseJsonSchema,
+  registerRequestJsonSchema,
+  registerResponseJsonSchema,
+  refreshTokenRequestJsonSchema,
+  refreshTokenResponseJsonSchema,
+  generateChallengeResponseJsonSchema,
+  currentUserResponseJsonSchema,
 } from '../schemas/auth.schema';
 
 /**
@@ -28,7 +29,7 @@ export async function authRoutes(server: FastifyInstance) {
       summary: 'Generate authentication challenge',
       description: 'Generate a time-limited challenge for Stellar signature authentication',
       response: {
-        200: generateChallengeResponseSchema,
+        200: generateChallengeResponseJsonSchema,
       },
     },
     handler: authController.generateChallenge.bind(authController),
@@ -42,9 +43,9 @@ export async function authRoutes(server: FastifyInstance) {
       tags: ['Authentication'],
       summary: 'Authenticate with Stellar signature',
       description: 'Authenticate using Stellar public key signature verification',
-      body: stellarAuthRequestSchema,
+      body: stellarAuthRequestJsonSchema,
       response: {
-        200: stellarAuthResponseSchema,
+        200: stellarAuthResponseJsonSchema,
       },
     },
     handler: authController.authenticateWithStellar.bind(authController),
@@ -58,9 +59,9 @@ export async function authRoutes(server: FastifyInstance) {
       tags: ['Authentication'],
       summary: 'Login with email/password',
       description: 'Authenticate using email and password credentials',
-      body: emailAuthRequestSchema,
+      body: emailAuthRequestJsonSchema,
       response: {
-        200: stellarAuthResponseSchema,
+        200: emailAuthResponseJsonSchema,
       },
     },
     handler: authController.loginWithEmail.bind(authController),
@@ -74,9 +75,9 @@ export async function authRoutes(server: FastifyInstance) {
       tags: ['Authentication'],
       summary: 'Register new user',
       description: 'Create a new user account with Stellar public key',
-      body: registerRequestSchema,
+      body: registerRequestJsonSchema,
       response: {
-        201: registerResponseSchema,
+        201: registerResponseJsonSchema,
       },
     },
     handler: authController.register.bind(authController),
@@ -90,9 +91,9 @@ export async function authRoutes(server: FastifyInstance) {
       tags: ['Authentication'],
       summary: 'Refresh access token',
       description: 'Get a new access token using a valid refresh token',
-      body: refreshTokenRequestSchema,
+      body: refreshTokenRequestJsonSchema,
       response: {
-        200: refreshTokenResponseSchema,
+        200: refreshTokenResponseJsonSchema,
       },
     },
     handler: authController.refreshToken.bind(authController),
@@ -131,7 +132,7 @@ export async function authRoutes(server: FastifyInstance) {
       description: 'Get authenticated user profile information',
       security: [{ bearerAuth: [] }],
       response: {
-        200: currentUserResponseSchema,
+        200: currentUserResponseJsonSchema,
       },
     },
     handler: authController.getCurrentUser.bind(authController),

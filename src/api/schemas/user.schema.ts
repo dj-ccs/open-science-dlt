@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { zodToJsonSchema } from 'zod-to-json-schema';
 
 /**
  * User Profile Validation Schemas
@@ -96,3 +97,14 @@ export type UpdateUserProfile = z.infer<typeof updateUserProfileSchema>;
 export type ReputationEvent = z.infer<typeof reputationEventSchema>;
 export type ReputationHistoryResponse = z.infer<typeof reputationHistoryResponseSchema>;
 export type UserIdParam = z.infer<typeof userIdParamSchema>;
+
+// ============================================================================
+// JSON SCHEMA EXPORTS (for Fastify)
+// ============================================================================
+
+// Fastify requires JSON Schema format, so we convert Zod schemas
+export const userProfileResponseJsonSchema = zodToJsonSchema(userProfileResponseSchema, 'userProfileResponse');
+export const updateUserProfileJsonSchema = zodToJsonSchema(updateUserProfileSchema, 'updateUserProfile');
+export const reputationEventJsonSchema = zodToJsonSchema(reputationEventSchema, 'reputationEvent');
+export const reputationHistoryResponseJsonSchema = zodToJsonSchema(reputationHistoryResponseSchema, 'reputationHistoryResponse');
+export const userIdParamJsonSchema = zodToJsonSchema(userIdParamSchema, 'userIdParam');

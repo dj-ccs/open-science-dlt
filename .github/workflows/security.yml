@@ -39,10 +39,13 @@ jobs:
       run: npm audit --production || true
       continue-on-error: true
 
-    - name: CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
       with:
         languages: javascript
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
 
   dependency-review:
     runs-on: ubuntu-latest

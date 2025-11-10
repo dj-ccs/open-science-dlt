@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { zodToJsonSchema } from 'zod-to-json-schema';
 
 // ============================================================================
 // STELLAR AUTHENTICATION
@@ -121,3 +122,19 @@ export type RegisterRequest = z.infer<typeof registerRequestSchema>;
 export type RefreshTokenRequest = z.infer<typeof refreshTokenRequestSchema>;
 export type RefreshTokenResponse = z.infer<typeof refreshTokenResponseSchema>;
 export type CurrentUserResponse = z.infer<typeof currentUserResponseSchema>;
+
+// ============================================================================
+// JSON SCHEMA EXPORTS (for Fastify)
+// ============================================================================
+
+// Fastify requires JSON Schema format, so we convert Zod schemas
+export const stellarAuthRequestJsonSchema = zodToJsonSchema(stellarAuthRequestSchema, 'stellarAuthRequest');
+export const stellarAuthResponseJsonSchema = zodToJsonSchema(stellarAuthResponseSchema, 'stellarAuthResponse');
+export const emailAuthRequestJsonSchema = zodToJsonSchema(emailAuthRequestSchema, 'emailAuthRequest');
+export const emailAuthResponseJsonSchema = stellarAuthResponseJsonSchema;
+export const registerRequestJsonSchema = zodToJsonSchema(registerRequestSchema, 'registerRequest');
+export const registerResponseJsonSchema = zodToJsonSchema(registerResponseSchema, 'registerResponse');
+export const refreshTokenRequestJsonSchema = zodToJsonSchema(refreshTokenRequestSchema, 'refreshTokenRequest');
+export const refreshTokenResponseJsonSchema = zodToJsonSchema(refreshTokenResponseSchema, 'refreshTokenResponse');
+export const generateChallengeResponseJsonSchema = zodToJsonSchema(generateChallengeResponseSchema, 'generateChallengeResponse');
+export const currentUserResponseJsonSchema = zodToJsonSchema(currentUserResponseSchema, 'currentUserResponse');

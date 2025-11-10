@@ -13,8 +13,17 @@ jest.mock('ipfs-http-client', () => ({
 
 jest.mock('stellar-sdk', () => {
   const actual = jest.requireActual('stellar-sdk');
+
+  // Mock Transaction class
+  const MockTransaction = jest.fn().mockImplementation(() => ({
+    hash: jest.fn().mockReturnValue(Buffer.from('mock-transaction-hash-1234567890abcdef', 'utf-8')),
+    toEnvelope: jest.fn(),
+    sign: jest.fn(),
+  }));
+
   return {
     ...actual,
+    Transaction: MockTransaction,
     Server: jest.fn().mockImplementation(() => ({
       loadAccount: jest.fn(),
       submitTransaction: jest.fn(),
