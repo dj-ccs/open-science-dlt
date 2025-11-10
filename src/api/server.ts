@@ -42,18 +42,19 @@ export async function buildServer(): Promise<FastifyInstance> {
     },
     // Custom schema error formatter
     schemaErrorFormatter: (errors, _dataVar) => {
-      // The validation errors are already correct from Zod, so we extract the message and return the exact expected structure.
-      const firstError = errors?.[0]?.message ?? 'Validation failed';
-
-      return {
-        statusCode: 400,
-        error: 'VALIDATION_ERROR', // <-- Fixes "Bad Request" assertion
-        message: firstError,
-        details: errors.map(e => ({
-          path: e.instancePath || e.schemaPath,
-          message: e.message,
-        })),
+      const message = errors?.[0]?.message ?? 'Validation failed';
+      const error = new Error(message) as Error & {
+        statusCode: number;
+        error: string;
+        validation: { path: string; message: string }[];
       };
+      error.statusCode = 400;
+      error.error = 'VALIDATION_ERROR';
+      error.validation = errors.map(e => ({
+        path: (e as any).instancePath || (e as any).schemaPath,
+        message: (e as any).message,
+      }));
+      return error;
     },
   });
 
