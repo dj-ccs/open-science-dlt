@@ -164,24 +164,18 @@ export class UserService {
       throw new UnauthorizedError('User not found or inactive');
     }
 
-    // Generate new access token
-    const { token, jti, expiresAt } = JWTService.generateAccessToken({
+    // Generate new access token (reuse existing session's JTI)
+    const { token } = JWTService.generateAccessToken({
       sub: user.id,
+      jti: session.jti, // Reuse the same session JTI
       stellarKey: user.stellarPublicKey,
       email: user.email || undefined,
       orcidId: user.orcidId || undefined,
       reputation: user.reputationScore,
     });
 
-    // Update session with new JTI
-    await sessionRepository.create({
-      user: {
-        connect: { id: user.id },
-      },
-      jti,
-      expiresAt,
-      refreshToken: session.refreshToken,
-    });
+    // No need to create/update session - we're reusing the existing one
+    // The refresh token and session remain valid, only the access token is refreshed
 
     return {
       accessToken: token,
