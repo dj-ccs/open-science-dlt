@@ -68,12 +68,12 @@ export async function errorHandler(
 
   // Handle schema validation errors (from schemaErrorFormatter)
   // These have a validation property attached
-  if ((error as any).error === 'VALIDATION_ERROR' || (error as FastifyError).validation) {
+  if ((error as any).validation || (error as any).error === 'VALIDATION_ERROR') {
     return reply.code(400).send({
       statusCode: 400,
       error: 'VALIDATION_ERROR',
       message: error.message,
-      validation: (error as any).validation || (error as FastifyError).validation,
+      validation: (error as any).validation,
     });
   }
 
