@@ -37,9 +37,8 @@ export async function errorHandler(
   if (error instanceof AppError) {
     return reply.code(error.statusCode).send({
       statusCode: error.statusCode,
-      error: error.name,
+      error: error.code || error.name,
       message: error.message,
-      code: error.code,
       ...(error.details && { details: error.details }),
     });
   }
@@ -48,7 +47,7 @@ export async function errorHandler(
   if (error instanceof ZodError) {
     return reply.code(400).send({
       statusCode: 400,
-      error: 'Validation Error',
+      error: 'VALIDATION_ERROR',
       message: 'Request validation failed',
       details: error.errors.map(err => ({
         path: err.path.join('.'),
@@ -62,7 +61,7 @@ export async function errorHandler(
   if ((error as FastifyError).validation) {
     return reply.code(400).send({
       statusCode: 400,
-      error: 'Validation Error',
+      error: 'VALIDATION_ERROR',
       message: error.message,
       validation: (error as FastifyError).validation,
     });
@@ -73,9 +72,23 @@ export async function errorHandler(
     const statusCode = (error as FastifyError).statusCode || 500;
     const message = statusCode === 500 ? 'Internal Server Error' : error.message;
 
+    // Map Fastify status codes to custom error codes
+    let errorCode = error.name || 'Error';
+    if (statusCode === 404) {
+      errorCode = 'NOT_FOUND';
+    } else if (statusCode === 400) {
+      errorCode = 'VALIDATION_ERROR';
+    } else if (statusCode === 401) {
+      errorCode = 'UNAUTHORIZED';
+    } else if (statusCode === 403) {
+      errorCode = 'FORBIDDEN';
+    } else if (statusCode === 409) {
+      errorCode = 'CONFLICT';
+    }
+
     return reply.code(statusCode).send({
       statusCode,
-      error: error.name || 'Error',
+      error: errorCode,
       message,
     });
   }

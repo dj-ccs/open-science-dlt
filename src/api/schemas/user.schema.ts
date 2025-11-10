@@ -12,15 +12,15 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
  * Public user profile information
  */
 export const userProfileResponseSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().cuid(),
   stellarPublicKey: z.string().min(1),
-  email: z.string().email().nullable(),
-  displayName: z.string().nullable(),
-  affiliation: z.string().nullable(),
-  bio: z.string().nullable(),
-  avatarUrl: z.string().url().nullable(),
+  email: z.string().email().nullish(),
+  displayName: z.string().nullish(),
+  affiliation: z.string().nullish(),
+  bio: z.string().nullish(),
+  avatarUrl: z.string().url().nullish(),
   reputationScore: z.number().int(),
-  orcidId: z.string().nullable(),
+  orcidId: z.string().nullish(),
   orcidVerified: z.boolean(),
   emailVerified: z.boolean(),
   isActive: z.boolean(),
@@ -59,15 +59,15 @@ const reputationEventTypeEnum = z.enum([
  * Single reputation event schema
  */
 export const reputationEventSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().cuid(),
   eventType: reputationEventTypeEnum,
   points: z.number().int(),
   reason: z.string(),
   createdAt: z.string().datetime(),
   // Related entity IDs (optional - not all events have related entities)
-  relatedPaperId: z.string().uuid().nullable(),
-  relatedReviewId: z.string().uuid().nullable(),
-  relatedVerificationId: z.string().uuid().nullable(),
+  relatedPaperId: z.string().cuid().nullish(),
+  relatedReviewId: z.string().cuid().nullish(),
+  relatedVerificationId: z.string().cuid().nullish(),
 });
 
 /**
@@ -75,7 +75,7 @@ export const reputationEventSchema = z.object({
  * Complete reputation history for a user
  */
 export const reputationHistoryResponseSchema = z.object({
-  userId: z.string().uuid(),
+  userId: z.string().cuid(),
   currentScore: z.number().int(),
   events: z.array(reputationEventSchema),
   totalEvents: z.number().int().nonnegative(),
@@ -85,7 +85,7 @@ export const reputationHistoryResponseSchema = z.object({
  * Path parameter schema for user ID
  */
 export const userIdParamSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().cuid(),
 });
 
 /**
@@ -103,8 +103,17 @@ export type UserIdParam = z.infer<typeof userIdParamSchema>;
 // ============================================================================
 
 // Fastify requires JSON Schema format, so we convert Zod schemas
-export const userProfileResponseJsonSchema = zodToJsonSchema(userProfileResponseSchema, 'userProfileResponse');
-export const updateUserProfileJsonSchema = zodToJsonSchema(updateUserProfileSchema, 'updateUserProfile');
+export const userProfileResponseJsonSchema = zodToJsonSchema(
+  userProfileResponseSchema,
+  'userProfileResponse'
+);
+export const updateUserProfileJsonSchema = zodToJsonSchema(
+  updateUserProfileSchema,
+  'updateUserProfile'
+);
 export const reputationEventJsonSchema = zodToJsonSchema(reputationEventSchema, 'reputationEvent');
-export const reputationHistoryResponseJsonSchema = zodToJsonSchema(reputationHistoryResponseSchema, 'reputationHistoryResponse');
+export const reputationHistoryResponseJsonSchema = zodToJsonSchema(
+  reputationHistoryResponseSchema,
+  'reputationHistoryResponse'
+);
 export const userIdParamJsonSchema = zodToJsonSchema(userIdParamSchema, 'userIdParam');
