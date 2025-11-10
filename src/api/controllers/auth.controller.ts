@@ -56,11 +56,12 @@ export class AuthController {
 
       reply.code(200).send(authResponse);
     } catch (error) {
-      // Convert all application errors (except UnauthorizedError) to 401 for authentication
-      if (error instanceof AppError && !(error instanceof UnauthorizedError)) {
-        throw new UnauthorizedError('Authentication failed');
+      // Re-throw UnauthorizedError as-is, convert everything else to UnauthorizedError
+      if (error instanceof AppError && error.name === 'UnauthorizedError') {
+        throw error;
       }
-      throw error;
+      // This handles DatabaseError, NotFoundError, etc. from service layer
+      throw new UnauthorizedError('Authentication failed');
     }
   }
 
@@ -81,11 +82,12 @@ export class AuthController {
 
       reply.code(200).send(authResponse);
     } catch (error) {
-      // Convert all application errors (except UnauthorizedError) to 401 for authentication
-      if (error instanceof AppError && !(error instanceof UnauthorizedError)) {
-        throw new UnauthorizedError('Authentication failed');
+      // Re-throw UnauthorizedError as-is, convert everything else to UnauthorizedError
+      if (error instanceof AppError && error.name === 'UnauthorizedError') {
+        throw error;
       }
-      throw error;
+      // This handles DatabaseError, NotFoundError, etc. from service layer
+      throw new UnauthorizedError('Authentication failed');
     }
   }
 
