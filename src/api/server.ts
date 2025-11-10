@@ -40,6 +40,10 @@ export async function buildServer(): Promise<FastifyInstance> {
         useDefaults: true,
       },
     },
+    // Custom schema error formatter
+    schemaErrorFormatter: (errors, dataVar) => {
+      return new Error(errors[0].message || 'Validation failed');
+    },
   });
 
   // Security: Helmet - Security headers
