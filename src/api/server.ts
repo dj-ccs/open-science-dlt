@@ -41,7 +41,7 @@ export async function buildServer(): Promise<FastifyInstance> {
       },
     },
     // Custom schema error formatter
-    schemaErrorFormatter: (errors, dataVar) => {
+    schemaErrorFormatter: (errors, _dataVar) => {
       return new Error(errors[0].message || 'Validation failed');
     },
   });
