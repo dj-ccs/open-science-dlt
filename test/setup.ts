@@ -4,6 +4,12 @@
  * Configures the test environment and provides cleanup utilities
  */
 
+// Load test environment variables
+import dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config({ path: path.resolve(__dirname, '../.env.test') });
+
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();

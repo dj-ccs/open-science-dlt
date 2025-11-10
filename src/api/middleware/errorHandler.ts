@@ -33,20 +33,19 @@ export async function errorHandler(
     },
   });
 
-  // Handle custom AppError
+  // Handle custom AppError instances
   if (error instanceof AppError) {
-    // Derive error code from name if not explicitly set
-    // Converts PascalCase to SNAKE_CASE (e.g., "NotFoundError" -> "NOT_FOUND")
-    const errorCode =
-      error.code ||
+    // Convert error name to uppercase SNAKE_CASE
+    // e.g., "NotFoundError" -> "NOT_FOUND_ERROR" -> "NOT_FOUND"
+    const appErrorCode = error.code ||
       error.name
-        .replace(/Error$/, '') // Remove Error suffix
         .replace(/([a-z])([A-Z])/g, '$1_$2') // Add underscore between camelCase parts
-        .toUpperCase();
+        .toUpperCase()
+        .replace(/_ERROR$/, ''); // Remove _ERROR suffix
 
     return reply.code(error.statusCode).send({
       statusCode: error.statusCode,
-      error: errorCode,
+      error: appErrorCode,
       message: error.message,
       ...(error.details && { details: error.details }),
     });
@@ -66,46 +65,61 @@ export async function errorHandler(
     });
   }
 
-  // Handle Fastify validation errors
-  if ((error as FastifyError).validation) {
+  // Handle schema validation errors (from schemaErrorFormatter)
+  // Check for explicit validation error marker FIRST to prevent fallthrough
+  const errorObj = error as any;
+  if (errorObj.error === 'VALIDATION_ERROR' || errorObj.validation) {
     return reply.code(400).send({
       statusCode: 400,
       error: 'VALIDATION_ERROR',
       message: error.message,
-      validation: (error as FastifyError).validation,
+      validation: errorObj.validation,
     });
   }
 
-  // Handle Fastify errors
+  // Handle Fastify errors by status code
   if ((error as FastifyError).statusCode) {
-    const statusCode = (error as FastifyError).statusCode || 500;
+    const fastifyError = error as FastifyError;
+    const statusCode = fastifyError.statusCode || 500;
 
-    // Map Fastify status codes to custom error codes and messages
-    let errorCode = error.name || 'Error';
-    let errorMessage = error.message;
+    // Map status codes to uppercase SNAKE_CASE error codes
+    let errorCode: string;
+    let errorMessage: string;
 
-    if (statusCode === 404) {
-      errorCode = 'NOT_FOUND';
-      errorMessage = 'Not Found';
-    } else if (statusCode === 400) {
-      errorCode = 'VALIDATION_ERROR';
-      errorMessage = error.message; // Keep the original validation message
-    } else if (statusCode === 401) {
-      errorCode = 'UNAUTHORIZED';
-      errorMessage = 'Unauthorized';
-    } else if (statusCode === 403) {
-      errorCode = 'FORBIDDEN';
-      errorMessage = 'Forbidden';
-    } else if (statusCode === 409) {
-      errorCode = 'CONFLICT';
-      errorMessage = 'Conflict';
-    } else if (statusCode === 500) {
-      errorMessage = 'Internal Server Error';
+    switch (statusCode) {
+      case 400:
+        errorCode = 'BAD_REQUEST';
+        errorMessage = error.message || 'Bad Request';
+        break;
+      case 401:
+        errorCode = 'UNAUTHORIZED';
+        errorMessage = error.message || 'Unauthorized';
+        break;
+      case 403:
+        errorCode = 'FORBIDDEN';
+        errorMessage = error.message || 'Forbidden';
+        break;
+      case 404:
+        errorCode = 'NOT_FOUND';
+        errorMessage = error.message || 'Not Found';
+        break;
+      case 409:
+        errorCode = 'CONFLICT';
+        errorMessage = error.message || 'Conflict';
+        break;
+      case 500:
+        errorCode = 'INTERNAL_SERVER_ERROR';
+        errorMessage = 'Internal Server Error';
+        break;
+      default:
+        errorCode = 'ERROR';
+        errorMessage = error.message || 'An error occurred';
     }
 
+    // Explicitly force uppercase error code in response
     return reply.code(statusCode).send({
       statusCode,
-      error: errorCode,
+      error: errorCode, // Always use the uppercase SNAKE_CASE errorCode
       message: errorMessage,
     });
   }
@@ -113,7 +127,7 @@ export async function errorHandler(
   // Handle unknown errors
   return reply.code(500).send({
     statusCode: 500,
-    error: 'Internal Server Error',
+    error: 'INTERNAL_SERVER_ERROR',
     message: process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : error.message,
   });
 }
