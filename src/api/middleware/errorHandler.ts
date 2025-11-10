@@ -70,26 +70,34 @@ export async function errorHandler(
   // Handle Fastify errors
   if ((error as FastifyError).statusCode) {
     const statusCode = (error as FastifyError).statusCode || 500;
-    const message = statusCode === 500 ? 'Internal Server Error' : error.message;
 
-    // Map Fastify status codes to custom error codes
+    // Map Fastify status codes to custom error codes and messages
     let errorCode = error.name || 'Error';
+    let errorMessage = error.message;
+
     if (statusCode === 404) {
       errorCode = 'NOT_FOUND';
+      errorMessage = 'Not Found';
     } else if (statusCode === 400) {
       errorCode = 'VALIDATION_ERROR';
+      errorMessage = error.message; // Keep the original validation message
     } else if (statusCode === 401) {
       errorCode = 'UNAUTHORIZED';
+      errorMessage = 'Unauthorized';
     } else if (statusCode === 403) {
       errorCode = 'FORBIDDEN';
+      errorMessage = 'Forbidden';
     } else if (statusCode === 409) {
       errorCode = 'CONFLICT';
+      errorMessage = 'Conflict';
+    } else if (statusCode === 500) {
+      errorMessage = 'Internal Server Error';
     }
 
     return reply.code(statusCode).send({
       statusCode,
       error: errorCode,
-      message,
+      message: errorMessage,
     });
   }
 
