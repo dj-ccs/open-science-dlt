@@ -46,10 +46,21 @@ By leveraging Stellar's distributed ledger technology and IPFS for content stora
 
 ## Key Features
 
+### Platform Features
 - **Immutable Research Record**: All submissions are permanently stored and timestamped
 - **Transparent Peer Review**: Review process tracked on-chain with verified credentials
 - **Independent Verification**: Separate verification contracts track reproduction attempts
 - **Public Accessibility**: All research publicly available immediately upon submission
+
+### 🔬 SE(3) Regenerative Metrics Service (NEW)
+- **λ-Estimation**: Compute optimal scaling factors for regenerative systems
+- **Verification Cascade**: Multi-level verification of return quality
+- **Python Service**: Flask REST API with scientific computing core
+- **TypeScript Integration**: Type-safe client for seamless integration
+- **Use Cases**: Agricultural rotation, carbon sequestration, sensor calibration
+
+**📚 Documentation**: [`docs/science/SE3_INTEGRATION.md`](docs/science/SE3_INTEGRATION.md)
+**🔗 Provenance**: Integrated from [Unified Conscious Evolution Framework](https://github.com/dj-ccs/Unified-Conscious-Evolution-Framework)
 
 ## Get Started
 
@@ -93,6 +104,16 @@ open-science-dlt/
 │   ├── platform/               # Core platform
 │   │   ├── OpenSciencePlatform.ts
 │   │   └── EventEmitter.ts
+│   ├── science/                # 🔬 SE(3) Regenerative Metrics (UCF)
+│   │   ├── lie_dynamics/       # Python SE(3) modules
+│   │   │   ├── se3_double_scale.py
+│   │   │   ├── resonance_aware.py
+│   │   │   ├── metrics_service.py
+│   │   │   └── tests/
+│   │   ├── api_server.py       # Flask REST API
+│   │   ├── client.ts           # TypeScript client
+│   │   ├── types.ts            # TypeScript types
+│   │   └── README.md           # Science module docs
 │   ├── services/               # Business logic
 │   │   └── user.service.ts
 │   ├── types/                  # TypeScript types
@@ -111,6 +132,9 @@ open-science-dlt/
 │   └── schema.prisma           # Database schema
 ├── config/                     # Configuration files
 ├── docs/                       # Documentation
+│   ├── science/                # 🔬 SE(3) integration docs
+│   │   └── SE3_INTEGRATION.md
+│   └── ...
 └── examples/                   # Usage examples
 ```
 
