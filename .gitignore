@@ -48,3 +48,7 @@ temp/
 # OS
 .DS_Store
 Thumbs.db
+
+# Test binaries
+tests/fixed_point_test
+tests/t_bsp_test
