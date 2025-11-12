@@ -15,26 +15,40 @@ EMBEDDED_DIR = ../embedded
 SRC_MATH = $(EMBEDDED_DIR)/se3_math.c
 SRC_TRIG = $(EMBEDDED_DIR)/trig_tables.c
 
-# Test executable
-TEST_EXEC = fixed_point_test
+# Test executables
+TEST_EXEC_MATH = fixed_point_test
+TEST_EXEC_TBSP = t_bsp_test
 
-.PHONY: all test clean
+.PHONY: all test test-math test-tbsp clean
 
-all: $(TEST_EXEC)
+all: $(TEST_EXEC_MATH) $(TEST_EXEC_TBSP)
 
-$(TEST_EXEC): fixed_point_accuracy_test.c $(SRC_MATH) $(SRC_TRIG)
+$(TEST_EXEC_MATH): fixed_point_accuracy_test.c $(SRC_MATH) $(SRC_TRIG)
 	@echo "Building fixed-point accuracy tests..."
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
-	@echo "✓ Build complete: $(TEST_EXEC)"
+	@echo "✓ Build complete: $(TEST_EXEC_MATH)"
 
-test: $(TEST_EXEC)
+$(TEST_EXEC_TBSP): t_bsp_test.c $(SRC_MATH) $(SRC_TRIG) $(EMBEDDED_DIR)/t_bsp.c $(EMBEDDED_DIR)/handoff.c
+	@echo "Building T-BSP tests..."
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	@echo "✓ Build complete: $(TEST_EXEC_TBSP)"
+
+test: test-math test-tbsp
+
+test-math: $(TEST_EXEC_MATH)
 	@echo ""
-	@echo "Running unit tests..."
+	@echo "Running fixed-point math tests..."
 	@echo ""
-	./$(TEST_EXEC)
+	./$(TEST_EXEC_MATH)
+
+test-tbsp: $(TEST_EXEC_TBSP)
+	@echo ""
+	@echo "Running T-BSP tests..."
+	@echo ""
+	./$(TEST_EXEC_TBSP)
 
 clean:
-	rm -f $(TEST_EXEC)
+	rm -f $(TEST_EXEC_MATH) $(TEST_EXEC_TBSP)
 	@echo "✓ Cleaned build artifacts"
 
 # Help target

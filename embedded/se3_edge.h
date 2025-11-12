@@ -19,6 +19,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -165,39 +166,10 @@ typedef struct {
 #pragma pack(pop)
 
 /* ========================================================================
- * TRAJECTORY BSP (T-BSP) SPATIAL PARTITIONING
- * ======================================================================== */
-
-/**
- * Fixed-size ring buffer for poses (no malloc).
- *
- * For ESP32-S3 with 512KB SRAM:
- *   - 128 poses × 56 bytes = 7,168 bytes per cell
- *   - 5 cells = 35,840 bytes (~7% of SRAM)
- */
-#define MAX_POSES_PER_CELL 128
-
-/**
- * T-BSP cell: spatial partition for trajectory segments.
- *
- * Grid levels (adaptive):
- *   - Level 0: 100km × 100km (open ocean)
- *   - Level 1: 10km × 10km (coastal - default for testing)
- *   - Level 2: 1km × 1km (ports/harbors)
- */
-typedef struct {
-    fixed_t bbox_min[2];    /* [lat_min, lon_min] in fixed-point degrees (8 bytes) */
-    fixed_t bbox_max[2];    /* [lat_max, lon_max] in fixed-point degrees (8 bytes) */
-    uint16_t cell_id;       /* Unique cell identifier (2 bytes) */
-    uint16_t pose_count;    /* Number of valid poses (2 bytes) */
-    uint16_t write_idx;     /* Ring buffer write position (2 bytes) */
-    uint16_t _padding;      /* Alignment padding (2 bytes) */
-    se3_pose_t poses[MAX_POSES_PER_CELL];  /* Ring buffer (7,168 bytes) */
-} t_bsp_cell_t;             /* Total: 7,192 bytes */
-
-/* ========================================================================
  * CELL HANDOFF PROTOCOL (vessel transitions)
  * ======================================================================== */
+
+/* Note: T-BSP types (t_bsp_t, t_bsp_cell_t) are defined in t_bsp.h */
 
 /**
  * Handoff packet: vessel moving from one cell to another.
@@ -277,14 +249,20 @@ fixed_t get_max_pythagorean_error(void);
 fixed_t Sin_from_LUT_interp(uint32_t angle);
 fixed_t Cos_from_LUT_interp(uint32_t angle);
 
-/* Spatial partitioning (t_bsp.c) */
-uint16_t latlon_to_cell(fixed_t lat, fixed_t lon, fixed_t grid_km);
-bool insert_pose(t_bsp_cell_t* cell, const se3_pose_t* pose);
-void get_adjacent_cells(uint16_t cell_id, uint16_t* neighbors, int* count);
+/* Spatial partitioning (t_bsp.c) - t_bsp_cell_t already defined above */
+/* See t_bsp.h for full T-BSP API */
 
 /* Handoff protocol (handoff.c) */
 void serialize_handoff(const handoff_packet_t* packet, uint8_t* buffer);
 bool deserialize_handoff(const uint8_t* buffer, handoff_packet_t* packet);
+bool handoff_should_trigger(const se3_pose_t* prev, const se3_pose_t* curr);
+void create_handoff_packet(uint32_t mmsi, const se3_pose_t* last_pose,
+                           uint16_t old_cell_id, uint16_t new_cell_id,
+                           uint8_t flags, handoff_packet_t* pkt);
+bool detect_dateline_cross(fixed_t lon1, fixed_t lon2);
+uint8_t compute_handoff_flags(fixed_t lat1, fixed_t lon1, fixed_t lat2, fixed_t lon2);
+size_t get_handoff_packet_size(void);
+bool validate_handoff_packet(const handoff_packet_t* pkt, uint32_t current_time);
 
 /* λ-estimation (lambda_estimator.c) */
 fixed_t compute_return_error(const se3_pose_t* poses, int n, fixed_t lambda);
