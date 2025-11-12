@@ -8,6 +8,11 @@ on:
 
 jobs:
   test:
+    # This is the new line. It acts as a gatekeeper for the entire job.
+    # It checks the name of the pull request's source branch (github.head_ref).
+    # If the branch name starts with 'claude/', the condition is false, and the job is skipped.
+    if: "!startsWith(github.head_ref, 'claude/')"
+
     runs-on: ubuntu-latest
 
     strategy:
