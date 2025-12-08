@@ -53,6 +53,7 @@ model User {
   reviews           Review[]
   verifications     Verification[]
   reputationHistory ReputationEvent[]
+  discussions       Discussion[]
 
   @@index([stellarPublicKey])
   @@index([email])
@@ -127,6 +128,7 @@ model Paper {
   // Relationships
   reviews         Review[]
   verifications   Verification[]
+  discussions     Discussion[]
 
   // Search optimization
   @@index([ipfsHash])
@@ -274,4 +276,43 @@ enum ReputationEventType {
   COMMUNITY_CONTRIBUTION
   PENALTY_SPAM
   PENALTY_MISCONDUCT
+}
+
+// ============================================================================
+// DISCUSSIONS (Threaded comments on papers)
+// ============================================================================
+
+model Discussion {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Content
+  content     String   @db.Text
+
+  // Paper being discussed
+  paperId     String
+  paper       Paper    @relation(fields: [paperId], references: [id], onDelete: Cascade)
+
+  // Author of the comment
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  // Threading support (self-referential)
+  parentId    String?
+  parent      Discussion?  @relation("DiscussionReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies     Discussion[] @relation("DiscussionReplies")
+
+  // Engagement
+  likesCount  Int      @default(0)
+
+  // Moderation
+  isDeleted   Boolean  @default(false)
+  isEdited    Boolean  @default(false)
+
+  @@index([paperId])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([createdAt])
+  @@map("discussions")
 }
