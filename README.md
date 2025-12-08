@@ -82,6 +82,14 @@ Together, we can ensure that scientific knowledge serves humanity rather than sp
 ```
 open-science-dlt/
 ├── .github/workflows/          # CI/CD workflows
+├── frontend/                   # 🆕 Web UI (React + Vite + TypeScript)
+│   ├── src/
+│   │   ├── components/         # Reusable UI components
+│   │   ├── pages/              # Route pages
+│   │   ├── lib/                # API client
+│   │   ├── store/              # Zustand state management
+│   │   └── types/              # TypeScript definitions
+│   └── ...
 ├── src/
 │   ├── api/                    # HTTP API layer (Fastify)
 │   │   ├── controllers/        # Request handlers
@@ -210,7 +218,21 @@ The API will be available at `http://localhost:3000`
 
 Check health: `http://localhost:3000/health`
 
-### 6. Run Tests
+### 6. Start the Web Interface (Frontend)
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The web UI will be available at `http://localhost:5173`
+
+**Note:** The frontend proxies API requests to `http://localhost:3000`, so ensure the API is running.
+
+See [frontend/README.md](frontend/README.md) for detailed frontend documentation.
+
+### 7. Run Tests
 
 ```bash
 npm test              # Run all tests with coverage
