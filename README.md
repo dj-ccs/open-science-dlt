@@ -32,6 +32,26 @@ This centralized control of scientific knowledge continues today through commerc
 - Lack of transparency in research verification
 - Limited access to negative results and failed experiments
 
+> “It is an industry like no other, with profit margins to rival Google – and it was created by one of Britain’s most notorious tycoons: Robert Maxwell.”  
+> — [The Guardian, 2017](https://www.theguardian.com/science/2017/jun/27/profitable-business-scientific-publishing-bad-for-science)
+
+Publishers receive research for free (funded by governments), rely on volunteer scientists for peer review, and then sell it back at extraordinary margins:
+
+> “Scientists create work under their own direction… and give it to publishers for free… the bulk of the editorial burden – checking the scientific validity… is done by working scientists on a volunteer basis.”  
+> “In 2010, Elsevier’s scientific publishing arm reported profits of £724m on just over £2bn in revenue. It was a 36% margin – higher than Apple, Google, or Amazon.”
+
+Physicists and biologists have called the model exploitative:
+
+> “Scientists are all slaves to publishers. What other industry receives its raw materials from its customers, gets those same customers to carry out the quality control… and then sells the same materials back… at a vastly inflated price?”  
+> — Adrian Sutton, Imperial College
+
+The system also distorts the scientific record by favouring spectacular positive results:
+
+> “Half of all clinical trials in the US are never published in a journal.”  
+> “Researchers may end up inadvertently exploring dead ends… solely because the information about previous failures has never been given space.”
+
+This creates paywalls on publicly-funded work, opaque peer review, and selective dissemination of knowledge.
+
 ## Our Solution
 
 OpenScienceDLT uses blockchain technology to create an immutable, transparent platform for scientific publishing that:
